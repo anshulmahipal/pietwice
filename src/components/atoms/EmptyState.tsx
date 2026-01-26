@@ -1,9 +1,9 @@
-import {Image, View, ViewStyle} from 'react-native';
-import React, {ReactNode} from 'react';
+import { Image, View, ViewStyle } from 'react-native';
+import React, { ReactNode } from 'react';
 import PrimaryText from './PrimaryText';
-import {Colors} from '../../hooks/useThemeColors';
-import {useTheme} from '../../context/ThemeContext';
-import {gs} from '../../styles/globalStyles';
+import { Colors } from '../../hooks/useThemeColors';
+import { useTheme } from '../../context/ThemeContext';
+import { gs } from '../../styles/globalStyles';
 
 type EmptyStateType = 'Transactions' | 'Insights' | 'Debts' | 'Categories';
 
@@ -29,10 +29,10 @@ const darkImages: Record<EmptyStateType, any> = {
   Categories: require('../../../assets/images/darkNoCategory.png'),
 };
 
-const EmptyState: React.FC<EmptyStateProps> = React.memo(({colors, type, style, message, actionButton}) => {
-  const {isDark} = useTheme();
+const EmptyState: React.FC<EmptyStateProps> = React.memo(({ colors, type, style, message, actionButton }) => {
+  const { isDark } = useTheme();
   const imageSource = isDark ? darkImages[type] : lightImages[type];
-  const displayMessage = message ?? `zero ${type}`;
+  const displayMessage = message ?? `pietwice ${type}`;
 
   return (
     <View style={[gs.center, gs.h350, style]}>

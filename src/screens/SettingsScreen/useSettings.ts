@@ -1,21 +1,21 @@
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserName, setUserName} from '../../redux/slice/userNameSlice';
-import {selectUserId} from '../../redux/slice/userIdSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserName, setUserName } from '../../redux/slice/userNameSlice';
+import { selectUserId } from '../../redux/slice/userIdSlice';
 import {
   selectCurrencyId,
   selectCurrencyName,
   selectCurrencySymbol,
   setCurrencyData,
 } from '../../redux/slice/currencyDataSlice';
-import {useCallback, useEffect, useState} from 'react';
-import {getAppVersion} from '../../utils/getVersion';
-import {useTheme, ThemeMode} from '../../context/ThemeContext';
+import { useCallback, useEffect, useState } from 'react';
+import { getAppVersion } from '../../utils/getVersion';
+import { useTheme, ThemeMode } from '../../context/ThemeContext';
 import StorageService from '../../utils/asyncStorageService';
-import {updateUserById, updateCurrencyById, deleteAllData} from '../../watermelondb/services';
-import {Linking} from 'react-native';
-import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
-import {fetchAllData, selectAllData} from '../../redux/slice/allDataSlice';
-import {AppDispatch} from '../../redux/store';
+import { updateUserById, updateCurrencyById, deleteAllData } from '../../watermelondb/services';
+import { Linking } from 'react-native';
+import { setIsOnboarded } from '../../redux/slice/isOnboardedSlice';
+import { fetchAllData, selectAllData } from '../../redux/slice/allDataSlice';
+import { AppDispatch } from '../../redux/store';
 
 const useSettings = () => {
   const userName = useSelector(selectUserName);
@@ -25,7 +25,7 @@ const useSettings = () => {
   const currencySymbol = useSelector(selectCurrencySymbol);
   const allData = useSelector(selectAllData);
 
-  const {colors, themeMode, setThemeMode} = useTheme();
+  const { colors, themeMode, setThemeMode } = useTheme();
 
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
@@ -78,7 +78,7 @@ const useSettings = () => {
   }, [userId, name, dispatch]);
 
   const handleCurrencyUpdate = useCallback(
-    async (currency: {code: string; name: string; symbol: string}) => {
+    async (currency: { code: string; name: string; symbol: string }) => {
       try {
         await updateCurrencyById(currencyId, {
           name: currency.name,
@@ -106,7 +106,7 @@ const useSettings = () => {
   }, []);
 
   const handleGithub = useCallback(() => {
-    const githubRepoURL = 'https://github.com/indranilbhuin/zero';
+    const githubRepoURL = 'https://github.com/indranilbhuin/pietwice';
     Linking.openURL(githubRepoURL).catch(err => {
       if (__DEV__) {
         console.error('Error opening GitHub:', err);
@@ -115,7 +115,7 @@ const useSettings = () => {
   }, []);
 
   const handlePrivacyPolicy = useCallback(() => {
-    const privacyPolicyURL = 'https://github.com/indranilbhuin/zero/blob/master/PRIVACYPOLICY.md';
+    const privacyPolicyURL = 'https://github.com/indranilbhuin/pietwice/blob/master/PRIVACYPOLICY.md';
     Linking.openURL(privacyPolicyURL).catch(err => {
       if (__DEV__) {
         console.error('Error opening Privacy Policy:', err);

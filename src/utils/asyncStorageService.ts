@@ -1,7 +1,7 @@
-import {createMMKV} from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 
 const storage = createMMKV({
-  id: 'zero-app-storage',
+  id: 'pietwice-app-storage',
 });
 
 const StorageService = {
@@ -62,6 +62,6 @@ const StorageService = {
   },
 };
 
-export {storage};
+export { storage };
 
 export default StorageService;

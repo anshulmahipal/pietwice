@@ -1,10 +1,10 @@
-import {PermissionsAndroid, Platform} from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 
 export const generateUniqueKey = () => {
   const characters =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const keyLength = 20;
-  let key = 'zero';
+  let key = 'pietwice';
 
   for (let i = 0; i < keyLength - 4; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
@@ -32,9 +32,9 @@ export const requestStoragePermission = async () => {
 
       if (
         granted['android.permission.READ_EXTERNAL_STORAGE'] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
+        PermissionsAndroid.RESULTS.GRANTED &&
         granted['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-          PermissionsAndroid.RESULTS.GRANTED
+        PermissionsAndroid.RESULTS.GRANTED
       ) {
         return true;
       } else {
@@ -44,9 +44,9 @@ export const requestStoragePermission = async () => {
 
         if (
           secondRequest['android.permission.READ_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
+          PermissionsAndroid.RESULTS.GRANTED &&
           secondRequest['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED
+          PermissionsAndroid.RESULTS.GRANTED
         ) {
           return true;
         } else {

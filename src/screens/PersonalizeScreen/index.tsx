@@ -1,14 +1,14 @@
-import {TouchableOpacity, View} from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
 import usePersonalize from './usePersonalize';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import CustomInput from '../../components/atoms/CustomInput';
-import {gs} from '../../styles/globalStyles';
+import { gs } from '../../styles/globalStyles';
 
 const PersonalizeScreen = () => {
-  const {colors, setName, name, handleSubmit, handleSkip, nameSchema} = usePersonalize();
+  const { colors, setName, name, handleSubmit, handleSkip, nameSchema } = usePersonalize();
   const isValid = nameSchema.safeParse(name).success;
 
   return (
@@ -24,7 +24,7 @@ const PersonalizeScreen = () => {
         </View>
 
         <View style={[gs.pt10p, gs.pb5p]}>
-          <PrimaryText size={15} color={colors.accentGreen}>Hi, It's zero! What Do Your Friends</PrimaryText>
+          <PrimaryText size={15} color={colors.accentGreen}>Hi, It's pietwice! What Do Your Friends</PrimaryText>
           <PrimaryText size={15} color={colors.accentGreen}>Call You?</PrimaryText>
         </View>
 

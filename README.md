@@ -1,10 +1,10 @@
 <div align="center">
     &nbsp;&nbsp;&nbsp;
-    <img src="assets/icons/adaptive-icon-light.png" height="300" alt="zero logo light">
-    <h1 align="center">zero - Minimal Expense Manager</h1>
+    <img src="assets/icons/adaptive-icon-light.png" height="300" alt="pietwice logo light">
+    <h1 align="center">pietwice - Minimal Expense Manager</h1>
 </div>
 
-Zero is a lightweight, open-source expense tracking app for Android & iOS. Built with privacy-first approach — all your financial data stays on your device. No servers, no tracking, no data collection.
+Pietwice is a lightweight, open-source expense tracking app for Android & iOS. Built with privacy-first approach — all your financial data stays on your device. No servers, no tracking, no data collection.
 
 ## Screenshots
 
@@ -114,8 +114,8 @@ src/
 
 ```bash
 # Clone the repo
-git clone https://github.com/indranilbhuin/zero.git
-cd zero
+git clone https://github.com/indranilbhuin/pietwice.git
+cd pietwice
 
 # Install dependencies
 yarn install
@@ -144,5 +144,5 @@ This project is licensed under the [BSD 2-Clause License](LICENSE).
 
 <div align="center">
   <p>Built with ❤️ in India</p>
-  <p><i>Embrace the simplicity of zero</i></p>
+  <p><i>Embrace the simplicity of pietwice</i></p>
 </div>

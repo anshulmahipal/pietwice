@@ -1,17 +1,17 @@
-import {Modal, ScrollView, Text, TouchableOpacity, View, Platform, Share} from 'react-native';
-import React, {useCallback} from 'react';
+import { Modal, ScrollView, Text, TouchableOpacity, View, Platform, Share } from 'react-native';
+import React, { useCallback } from 'react';
 import Icon from '../../components/atoms/Icons';
-import {goBack} from '../../utils/navigationUtils';
+import { goBack } from '../../utils/navigationUtils';
 import useSettings from './useSettings';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import CustomToast from '../../components/molecules/CustomToast';
 import RNFS from 'react-native-fs';
-import {generateUniqueKey, requestStoragePermission} from '../../utils/dataUtils';
-import {getTimestamp} from '../../utils/dateUtils';
+import { generateUniqueKey, requestStoragePermission } from '../../utils/dataUtils';
+import { getTimestamp } from '../../utils/dateUtils';
 import ChangeNameModal from '../../components/molecules/ChangeNameModal';
-import {SheetManager} from 'react-native-actions-sheet';
-import {gs} from '../../styles/globalStyles';
+import { SheetManager } from 'react-native-actions-sheet';
+import { gs } from '../../styles/globalStyles';
 
 const SettingsScreen = () => {
   const {
@@ -55,8 +55,8 @@ const SettingsScreen = () => {
   const handleOpenCurrencySheet = useCallback(() => {
     void SheetManager.show('currency-picker-sheet', {
       payload: {
-        selectedCurrency: {code: '', name: currencyName, symbol: currencySymbol},
-        onSelect: (currency: {code: string; name: string; symbol: string}) => {
+        selectedCurrency: { code: '', name: currencyName, symbol: currencySymbol },
+        onSelect: (currency: { code: string; name: string; symbol: string }) => {
           handleCurrencyUpdate(currency);
         },
       },
@@ -71,8 +71,8 @@ const SettingsScreen = () => {
       }
 
       const currentDateAndTime = getTimestamp();
-      const fileName = `zero${currentDateAndTime}.json`;
-      const jsonData = JSON.stringify({key: generateUniqueKey(), data: dataToExport}, null, 2);
+      const fileName = `pietwice${currentDateAndTime}.json`;
+      const jsonData = JSON.stringify({ key: generateUniqueKey(), data: dataToExport }, null, 2);
 
       if (Platform.OS === 'ios') {
         const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
@@ -81,7 +81,7 @@ const SettingsScreen = () => {
 
         await Share.share({
           url: `file://${path}`,
-          title: 'Export Zero Data',
+          title: 'Export Pietwice Data',
         });
 
         setIsDownloadSuccessful(true);
@@ -106,14 +106,14 @@ const SettingsScreen = () => {
     }
   };
 
-  const renderRadioButtons = (onThemeSelect: {(theme: any): Promise<void>; (arg0: string): void}) => {
+  const renderRadioButtons = (onThemeSelect: { (theme: any): Promise<void>; (arg0: string): void }) => {
     const themes = ['light', 'dark', 'system'];
     return themes.map(theme => (
       <TouchableOpacity key={theme} onPress={() => onThemeSelect(theme)}>
         <View style={[gs.rowBetweenCenter, gs.mb20]}>
           <PrimaryText>{theme}</PrimaryText>
-          <View style={[gs.size20, gs.rounded10, gs.border2, gs.center, {borderColor: colors.primaryText}]}>
-            {selectedTheme === theme && <View style={[gs.size10, gs.rounded5, {backgroundColor: colors.primaryText}]} />}
+          <View style={[gs.size20, gs.rounded10, gs.border2, gs.center, { borderColor: colors.primaryText }]}>
+            {selectedTheme === theme && <View style={[gs.size10, gs.rounded5, { backgroundColor: colors.primaryText }]} />}
           </View>
         </View>
       </TouchableOpacity>
@@ -129,12 +129,12 @@ const SettingsScreen = () => {
               <Icon name="arrow-left" size={25} color={colors.primaryText} />
             </TouchableOpacity>
           </View>
-          <PrimaryText size={25}>zero</PrimaryText>
+          <PrimaryText size={25}>pietwice</PrimaryText>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <PrimaryText color={colors.accentGreen} style={gs.mt20}>Appearance & Personalization</PrimaryText>
-        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
+        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, { backgroundColor: colors.containerColor }]}>
           <TouchableOpacity onPress={() => setIsThemeModalVisible(true)}>
             <View style={[gs.rowBetweenCenter, gs.minH60, gs.px14, gs.py12]}>
               <PrimaryText>Choose Theme</PrimaryText>
@@ -159,7 +159,7 @@ const SettingsScreen = () => {
         </View>
 
         <PrimaryText color={colors.accentGreen} style={gs.mt20}>Manage your Data</PrimaryText>
-        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
+        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, { backgroundColor: colors.containerColor }]}>
           <TouchableOpacity onPress={() => exportData(allData)}>
             <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Download your data</PrimaryText>
@@ -172,19 +172,19 @@ const SettingsScreen = () => {
             <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Delete all data</PrimaryText>
               <PrimaryText size={11} color={colors.secondaryText}>
-                All data associated with zero will be deleted
+                All data associated with pietwice will be deleted
               </PrimaryText>
             </View>
           </TouchableOpacity>
         </View>
 
         <PrimaryText color={colors.accentGreen} style={gs.mt20}>Help & Feedback</PrimaryText>
-        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
+        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, { backgroundColor: colors.containerColor }]}>
           <TouchableOpacity onPress={handleRateNow}>
             <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Rate the app</PrimaryText>
               <PrimaryText size={11} color={colors.secondaryText}>
-                Enjoying zero? Your feedback helps us improve!
+                Enjoying pietwice? Your feedback helps us improve!
               </PrimaryText>
             </View>
           </TouchableOpacity>
@@ -198,7 +198,7 @@ const SettingsScreen = () => {
             <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Privacy Policy</PrimaryText>
               <PrimaryText size={11} color={colors.secondaryText}>
-                Your Data, Your Device: zero Servers, zero Access.
+                Your Data, Your Device: pietwice Servers, pietwice Access.
               </PrimaryText>
             </View>
           </TouchableOpacity>
@@ -208,16 +208,16 @@ const SettingsScreen = () => {
           </View>
         </View>
         <PrimaryText size={12} style={[gs.selfCenter, gs.textCenter, gs.mt15]}>
-          Embrace the simplicity of zero
+          Embrace the simplicity of pietwice
         </PrimaryText>
         <PrimaryText size={12} style={[gs.selfCenter, gs.textCenter, gs.mb5p]}>
-          Developed with <Text style={{color: colors.accentGreen}}>passion</Text> in India.
+          Developed with <Text style={{ color: colors.accentGreen }}>passion</Text> in India.
         </PrimaryText>
       </ScrollView>
 
       <Modal animationType="fade" transparent={true} visible={isThemeModalVisible} onRequestClose={handleThemeModalClose}>
-        <View style={[gs.wFull, gs.flex1, gs.justifyEnd, {backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
-          <View style={[gs.roundedTop15, gs.p15, {backgroundColor: colors.containerColor}]}>
+        <View style={[gs.wFull, gs.flex1, gs.justifyEnd, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+          <View style={[gs.roundedTop15, gs.p15, { backgroundColor: colors.containerColor }]}>
             <PrimaryText size={17} weight="semibold" style={[gs.mt10, gs.mb30]}>
               Select Theme
             </PrimaryText>

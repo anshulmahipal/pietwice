@@ -1,20 +1,20 @@
-import {Text, View} from 'react-native';
+import { Text, View } from 'react-native';
 import React from 'react';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
 import Carousel from '../../components/atoms/Carousel';
 import useWelcome from './useWelcome';
-import {gs} from '../../styles/globalStyles';
+import { gs } from '../../styles/globalStyles';
 
 const WelcomeScreen = () => {
-  const {colors, handleAllreadyUser, handleNewUser} = useWelcome();
+  const { colors, handleAllreadyUser, handleNewUser } = useWelcome();
 
   return (
     <PrimaryView colors={colors} style={gs.justifyBetween}>
       <View style={gs.pt15p}>
         <PrimaryText size={24}>
-          Welcome to <Text style={{color: colors.accentGreen}}>zero</Text>
+          Welcome to <Text style={{ color: colors.accentGreen }}>pietwice</Text>
         </PrimaryText>
       </View>
 

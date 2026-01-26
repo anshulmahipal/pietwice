@@ -1,4 +1,4 @@
-package com.anotherwhy.zero
+package com.anotherwhy.pietwice
 
 import android.app.Application
 import com.facebook.react.PackageList

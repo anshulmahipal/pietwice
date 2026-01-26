@@ -3,23 +3,23 @@ import PrimaryButton from '../../components/atoms/PrimaryButton';
 import useSplash from './useSplash';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
-import {View} from 'react-native';
-import {gs} from '../../styles/globalStyles';
+import { View } from 'react-native';
+import { gs } from '../../styles/globalStyles';
 
 const SplashScreen = () => {
-  const {handleClick, colors} = useSplash();
+  const { handleClick, colors } = useSplash();
 
   return (
     <PrimaryView colors={colors} style={gs.justifyBetween}>
       <View>
         <PrimaryText size={90} style={gs.pt20p} color={colors.primaryText}>
-          zero
+          pietwice
         </PrimaryText>
         <PrimaryText size={25} color={colors.secondaryText}>
           Count Every
         </PrimaryText>
         <PrimaryText size={25} color={colors.secondaryText}>
-          Penny with zero
+          Penny with pietwice
         </PrimaryText>
       </View>
       <PrimaryButton onPress={handleClick} colors={colors} buttonTitle={'Get Started'} />

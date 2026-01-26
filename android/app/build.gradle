@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.anotherwhy.zero"
+    namespace "com.anotherwhy.pietwice"
     defaultConfig {
-        applicationId "com.anotherwhy.zero"
+        applicationId "com.anotherwhy.pietwice"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2

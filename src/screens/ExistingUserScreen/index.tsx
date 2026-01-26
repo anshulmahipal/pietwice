@@ -1,12 +1,12 @@
-import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
-import React, {memo, useMemo} from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import React, { memo, useMemo } from 'react';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import Icon from '../../components/atoms/Icons';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
 import CustomToast from '../../components/molecules/CustomToast';
 import useExistingUser from './useExistingUser';
-import {gs} from '../../styles/globalStyles';
+import { gs } from '../../styles/globalStyles';
 
 const SyncStatusItem = memo(({
   label,
@@ -82,7 +82,7 @@ const ExistingUserScreen = () => {
           <View style={gs.pt10p}>
             <PrimaryText size={20}>As an existing user if you have exported your data,</PrimaryText>
             <PrimaryText size={15} color={colors.accentGreen} style={gs.pt10p}>
-              Upload your <Text style={{color: colors.accentGreen}}>zero***.json</Text> file
+              Upload your <Text style={{ color: colors.accentGreen }}>pietwice***.json</Text> file
               {'\n'}we will sync your data automatically
             </PrimaryText>
           </View>
