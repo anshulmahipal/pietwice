@@ -1,0 +1,321 @@
+# Cursor Rules for pietwice
+
+You are an expert React Native developer working on the pietwice expense tracking app. Follow these rules strictly when making changes to the codebase.
+
+## Project Overview
+
+- **Framework**: React Native 0.81.5
+- **Language**: TypeScript (strict mode enabled)
+- **Database**: WatermelonDB (SQLite)
+- **State Management**: Redux + Redux Toolkit
+- **Navigation**: React Navigation v7
+- **UI Components**: Custom components + Lucide React Native icons
+- **Styling**: Custom global styles (globalStyles.ts)
+
+## Code Style & Formatting
+
+### TypeScript
+- Always use TypeScript with strict mode
+- Use explicit types, avoid `any`
+- Enable `noImplicitAny`, `strictNullChecks`, and all strict flags
+- Use interfaces for object types, types for unions/intersections
+- Prefer `const` over `let`, avoid `var`
+- Use optional chaining (`?.`) and nullish coalescing (`??`) when appropriate
+
+### Code Formatting (Prettier)
+- Single quotes for strings
+- No semicolons (unless required)
+- Trailing commas: `all`
+- Print width: 120 characters
+- Arrow parens: `avoid` (when single param)
+- Bracket spacing: `false`
+- Bracket same line: `true`
+
+### Naming Conventions
+- **Components**: PascalCase (e.g., `PrimaryButton`, `TransactionCard`)
+- **Hooks**: camelCase starting with `use` (e.g., `useHome`, `useSettings`)
+- **Files**: 
+  - Components: PascalCase matching component name
+  - Hooks: camelCase matching hook name
+  - Utils/Services: camelCase (e.g., `dataUtils.ts`, `asyncStorageService.ts`)
+- **Variables/Functions**: camelCase
+- **Constants**: UPPER_SNAKE_CASE
+- **Types/Interfaces**: PascalCase
+
+## Project Structure
+
+### Screen Structure
+Every screen follows this pattern:
+```
+src/screens/ScreenName/
+├── index.tsx          # UI component (presentation layer)
+├── useScreenName.ts   # Business logic hook (custom hook)
+└── style.ts          # Screen-specific styles (if needed)
+```
+
+**Rules:**
+- UI components (`index.tsx`) should be pure presentation components
+- Business logic goes in custom hooks (`useScreenName.ts`)
+- Extract reusable logic to hooks or utils
+- Keep components small and focused
+
+### Component Structure
+```
+src/components/
+├── atoms/          # Basic components (Button, Input, Text, etc.)
+└── molecules/      # Composite components (TransactionCard, etc.)
+```
+
+**Rules:**
+- Atoms: Small, reusable, single-purpose components
+- Molecules: Composed of atoms, more complex but still reusable
+- Always use `PrimaryView`, `PrimaryText` from atoms for consistency
+- Use `gs` (globalStyles) for spacing and layout
+
+### Database Layer (WatermelonDB)
+```
+src/watermelondb/
+├── models/         # Data models (User, Category, Expense, etc.)
+├── services/       # CRUD operations
+├── schema.ts       # Database schema
+└── database.ts     # DB initialization
+```
+
+**Rules:**
+- All database operations go through services
+- Use WatermelonDB's reactive queries with `useDatabase` or `useQuery`
+- Always handle errors in database operations
+- Use transactions for multiple related operations
+
+### State Management (Redux)
+```
+src/redux/
+├── slice/          # Redux slices (using Redux Toolkit)
+└── store.ts        # Store configuration
+```
+
+**Rules:**
+- Use Redux Toolkit for all state management
+- Create slices for each domain (expenses, categories, debts, etc.)
+- Use selectors for accessing state
+- Keep state normalized when possible
+
+## Component Development Rules
+
+### React Components
+1. **Always use functional components** - No class components
+2. **Use hooks** - Prefer hooks over HOCs or render props
+3. **Extract custom hooks** - Move complex logic to custom hooks
+4. **Props destructuring** - Destructure props at function signature
+5. **Memoization** - Use `React.memo`, `useMemo`, `useCallback` when appropriate
+6. **Type safety** - Always type component props with interfaces
+
+### Component Example Pattern:
+```typescript
+import React from 'react';
+import {View} from 'react-native';
+import PrimaryView from '../atoms/PrimaryView';
+import PrimaryText from '../atoms/PrimaryText';
+import {gs} from '../../styles/globalStyles';
+import {Colors} from '../../hooks/useThemeColors';
+
+interface ComponentNameProps {
+  // Define props with types
+  title: string;
+  onPress: () => void;
+}
+
+const ComponentName: React.FC<ComponentNameProps> = ({title, onPress}) => {
+  const {colors} = useTheme();
+  
+  return (
+    <PrimaryView colors={colors}>
+      <PrimaryText>{title}</PrimaryText>
+    </PrimaryView>
+  );
+};
+
+export default ComponentName;
+```
+
+### Custom Hooks Pattern:
+```typescript
+import {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+
+const useScreenName = () => {
+  const dispatch = useDispatch();
+  const {colors} = useTheme();
+  // ... hook logic
+  
+  return {
+    colors,
+    // ... return values
+  };
+};
+
+export default useScreenName;
+```
+
+## Styling Rules
+
+1. **Use globalStyles** - Import `gs` from `../../styles/globalStyles`
+2. **Theme colors** - Always use `colors` from `useTheme()` hook
+3. **Consistent spacing** - Use `gs.mt10`, `gs.p20`, etc. from globalStyles
+4. **No inline styles** - Extract styles to StyleSheet or use globalStyles
+5. **Responsive** - Consider different screen sizes (use percentages when appropriate)
+
+## Database Rules
+
+1. **Service layer** - All DB operations through services
+2. **Error handling** - Always wrap DB operations in try-catch
+3. **Reactive queries** - Use WatermelonDB's reactive queries for real-time updates
+4. **Transactions** - Use batch operations for multiple writes
+5. **Migrations** - Always create migrations for schema changes
+
+## State Management Rules
+
+1. **Redux Toolkit** - Use createSlice for all state slices
+2. **Selectors** - Export selectors from slices
+3. **Async actions** - Use Redux Saga for complex async flows (if needed)
+4. **Normalization** - Keep state normalized
+5. **Immutability** - Never mutate state directly
+
+## Navigation Rules
+
+1. **Use navigation utils** - Import `navigate` from `utils/navigationUtils`
+2. **Type safety** - Define navigation types for type-safe navigation
+3. **Screen names** - Use consistent screen naming
+
+## Error Handling
+
+1. **Always handle errors** - Use try-catch blocks
+2. **User-friendly messages** - Show meaningful error messages
+3. **Logging** - Use `console.error` in development, handle gracefully in production
+4. **Loading states** - Always show loading states for async operations
+
+## Testing Considerations
+
+1. **Test business logic** - Focus tests on hooks and utils
+2. **Component tests** - Test component rendering and user interactions
+3. **Mock dependencies** - Mock WatermelonDB, Redux, and navigation
+
+## Git & Branching Rules
+
+### Branch Naming
+- Follow format: `<type>/<description>`
+- Types: `feature/`, `bugfix/`, `hotfix/`, `chore/`, `docs/`, `test/`, `refactor/`
+- Use lowercase with hyphens: `feature/add-dark-mode-toggle`
+
+### Commit Messages
+Follow conventional commits:
+```
+<type>(<scope>): <subject>
+
+<body>
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+Examples:
+- `feat(transactions): add bulk delete functionality`
+- `fix(categories): resolve deletion issue`
+- `docs(readme): update installation instructions`
+
+### Pull Requests
+- Create PRs from feature branches to `main`
+- Use descriptive titles: `[Type] Brief description`
+- Link related issues
+- Request reviews before merging
+
+## Code Quality Rules
+
+1. **No console.logs** - Remove or use proper logging
+2. **No commented code** - Delete commented code or explain why it's needed
+3. **No magic numbers** - Use named constants
+4. **DRY principle** - Don't repeat yourself, extract common logic
+5. **Single responsibility** - Each function/component should do one thing
+6. **Small functions** - Keep functions small and focused
+7. **Meaningful names** - Use descriptive variable and function names
+
+## Performance Rules
+
+1. **FlashList** - Use FlashList for long lists (already in dependencies)
+2. **Lazy loading** - Use WatermelonDB's lazy loading features
+3. **Memoization** - Memoize expensive computations
+4. **Image optimization** - Optimize images and use appropriate formats
+5. **Bundle size** - Be mindful of bundle size, avoid unnecessary dependencies
+
+## Accessibility
+
+1. **Labels** - Add accessibility labels to interactive elements
+2. **Touch targets** - Ensure minimum touch target size (44x44)
+3. **Screen readers** - Test with screen readers when possible
+
+## Security Rules
+
+1. **No sensitive data** - Never commit API keys, secrets, or sensitive data
+2. **Input validation** - Validate all user inputs (use Zod schemas)
+3. **SQL injection** - Use WatermelonDB queries (safe by design)
+4. **Data privacy** - All data stored locally, no external transmission
+
+## When Making Changes
+
+1. **Check existing patterns** - Look at similar files before creating new ones
+2. **Follow the structure** - Match the existing project structure
+3. **Update related files** - If changing a model, update services, types, etc.
+4. **Test changes** - Test your changes before committing
+5. **Update docs** - Update README or docs if adding features
+6. **Run linter** - Ensure code passes ESLint checks
+7. **Type check** - Run `npm run typecheck` before committing
+
+## Common Patterns
+
+### Theme Usage
+```typescript
+import {useTheme} from '../context/ThemeContext';
+
+const Component = () => {
+  const {colors} = useTheme();
+  // Use colors.primary, colors.background, etc.
+};
+```
+
+### Database Query
+```typescript
+import {useDatabase} from '@nozbe/watermelondb/hooks';
+import {Q} from '@nozbe/watermelondb';
+
+const expenses = useDatabase().get('expenses').query(
+  Q.where('date', Q.gte(startDate))
+);
+```
+
+### Redux Usage
+```typescript
+import {useSelector, useDispatch} from 'react-redux';
+import {selectExpenses, addExpense} from '../redux/slice/expenseDataSlice';
+
+const Component = () => {
+  const dispatch = useDispatch();
+  const expenses = useSelector(selectExpenses);
+  // ...
+};
+```
+
+## Important Notes
+
+- **Always use TypeScript strict mode** - No `any` types
+- **Follow existing code patterns** - Consistency is key
+- **Test on both iOS and Android** - React Native differences exist
+- **Consider offline-first** - App works 100% offline
+- **Privacy-first** - No data collection, all local storage
+- **Performance matters** - Optimize for mobile devices
+
+## Questions?
+
+When in doubt:
+1. Check existing similar code in the codebase
+2. Follow the patterns established in the project
+3. Refer to CONTRIBUTING.md for branching and commit standards
+4. Maintain consistency with existing code style
