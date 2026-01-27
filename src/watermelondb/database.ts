@@ -4,6 +4,7 @@ import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import {schema} from './schema';
 import {migrations} from './migrations';
 import {User, Category, Expense, Currency, Debtor, Debt} from './models';
+import logger from '../../utils/logger';
 
 // Lazy initialization - database is only created on first access
 let _database: Database | null = null;
@@ -15,9 +16,7 @@ const getDatabase = (): Database => {
       migrations,
       jsi: true,
       onSetUpError: error => {
-        if (__DEV__) {
-          console.error('WatermelonDB setup error:', error);
-        }
+        logger.error('WatermelonDB setup error:', error);
       },
     });
 
