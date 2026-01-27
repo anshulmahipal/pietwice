@@ -16,7 +16,10 @@
     "start:reset": "react-native start --reset-cache",
     "test": "jest",
     "typecheck": "tsc --strict",
-    "postversion": "react-native-version"
+    "postversion": "react-native-version",
+    "stallion:build": "stallion build",
+    "stallion:release": "stallion release",
+    "stallion:check": "stallion check"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
@@ -45,6 +48,7 @@
     "react-native-reanimated": "^4.2.1",
     "react-native-safe-area-context": "^5.6.2",
     "react-native-screens": "^4.18.0",
+    "react-native-stallion": "^2.3.2",
     "react-native-svg": "^15.14.0",
     "react-native-svg-charts": "^5.4.0",
     "react-native-swiper": "^1.6.0",
@@ -74,6 +78,7 @@
     "react-native-svg-transformer": "^1.5.2",
     "react-native-version": "^4.0.0",
     "react-test-renderer": "19.1.0",
+    "stallion-cli": "^2.4.2",
     "typescript": "^5.8.3"
   },
   "engines": {

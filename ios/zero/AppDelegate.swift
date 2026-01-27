@@ -2,6 +2,7 @@ import React
 import ReactAppDependencyProvider
 import React_RCTAppDelegate
 import UIKit
+import StallionModule
 
 @main
 class AppDelegate: RCTAppDelegate {
@@ -27,7 +28,7 @@ class AppDelegate: RCTAppDelegate {
     #if DEBUG
       RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
     #else
-      Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+      StallionModule.getBundleURL()
     #endif
   }
 }
