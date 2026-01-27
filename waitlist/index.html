@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Join the waitlist for pietwice - A minimal, privacy-first expense manager for Android & iOS. Count every penny with pietwice.">
+  <title>pietwice - Join the Waitlist</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="logo-container">
+        <div class="logo">pietwice</div>
+        <p class="tagline">Count Every Penny</p>
+      </div>
+      
+      <h1 class="main-heading">Minimal Expense Manager</h1>
+      <p class="subheading">A lightweight, privacy-first expense tracking app for Android & iOS. All your financial data stays on your device.</p>
+      
+      <!-- Screenshot Preview -->
+      <!-- Note: Copy screenshots to waitlist/assets/screenshots/ before deploying -->
+      <div class="screenshots-preview">
+        <div class="screenshot-card">
+          <img src="assets/screenshots/zero_home_screen_light.png" alt="Home Screen" class="screenshot" onerror="this.style.display='none'">
+        </div>
+        <div class="screenshot-card">
+          <img src="assets/screenshots/zero_report_screen_light.png" alt="Reports Screen" class="screenshot" onerror="this.style.display='none'">
+        </div>
+        <div class="screenshot-card">
+          <img src="assets/screenshots/zero_debts_screen_light.png" alt="Debts Screen" class="screenshot" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Privacy First</h3>
+          <p>100% offline. All data stored locally on your device. Zero data collection.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Smart Insights</h3>
+          <p>Monthly spending breakdown, heatmap calendar, and daily expense tracking.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💳</div>
+          <h3>Debt Tracking</h3>
+          <p>Track money you owe or are owed. Manage debtors and individual debts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Customizable</h3>
+          <p>Create custom categories with icons and colors. Light & dark themes.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Waitlist Form Section -->
+    <section class="waitlist-section">
+      <div class="waitlist-container">
+        <h2>Join the Waitlist</h2>
+        <p class="waitlist-description">Be among the first to experience pietwice. We'll notify you when the app is ready.</p>
+        
+        <form id="waitlist-form" class="waitlist-form">
+          <div class="form-group">
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="Enter your email address" 
+              required
+              class="email-input"
+            >
+            <button type="submit" class="submit-btn" id="submit-btn">
+              <span class="btn-text">Join Waitlist</span>
+              <span class="btn-loader" style="display: none;">⏳</span>
+            </button>
+          </div>
+          <p class="privacy-note">🔒 We respect your privacy. We'll only use your email to notify you about the app launch.</p>
+        </form>
+
+        <div id="success-message" class="success-message" style="display: none;">
+          <div class="success-icon">✓</div>
+          <h3>You're on the list!</h3>
+          <p>We'll send you an email when pietwice is ready. Thank you for your interest!</p>
+        </div>
+
+        <div id="error-message" class="error-message" style="display: none;">
+          <div class="error-icon">⚠</div>
+          <p>Something went wrong. Please try again later.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Built with ❤️ by <a href="https://anotherwhy.com" target="_blank" rel="noopener noreferrer">anotherwhy technologies</a></p>
+      <p class="footer-tagline">Embrace the simplicity of pietwice</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
