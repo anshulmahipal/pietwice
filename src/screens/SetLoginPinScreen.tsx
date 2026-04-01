@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
@@ -107,7 +108,7 @@ export function SetLoginPinScreen({
                     ]}
                     onPress={handleBackspacePress}
                   >
-                    <Text style={styles.keyText}>⌫</Text>
+                    <Ionicons name="backspace-outline" size={26} color="#111827" />
                   </Pressable>
                 );
               }

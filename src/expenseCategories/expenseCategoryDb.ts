@@ -224,3 +224,19 @@ export async function loadExpenseLineItemsForDay(expenseDateYmd: string): Promis
     expenseDate: r.expense_date,
   }));
 }
+
+/** Sum of all expense line-item amounts in an inclusive YYYY-MM-DD range. */
+export async function loadExpenseTotalForRange(startYmd: string, endYmd: string): Promise<number> {
+  await initExpenseCategoryStore();
+  const db = await getDatabase();
+  const row = await db.getFirstAsync<{ total: number | string | null }>(
+    `SELECT SUM(CAST(amount AS REAL)) AS total
+     FROM ${LINE_ITEMS_TABLE}
+     WHERE expense_date >= ? AND expense_date <= ?`,
+    startYmd,
+    endYmd,
+  );
+  const value = row?.total;
+  const n = typeof value === 'number' ? value : parseFloat(String(value ?? '0'));
+  return Number.isFinite(n) ? n : 0;
+}

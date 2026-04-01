@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import {
@@ -95,9 +96,20 @@ export default function HouseExpenseSettingsScreen() {
             (pressed || (isEditing && isSaving)) && styles.headerButtonPressed,
           ]}
         >
-          <Text style={[styles.headerAction, isEditing && isSaving && styles.headerActionMuted]}>
-            {isEditing ? (isSaving ? 'Saving…' : 'Save') : 'Edit'}
-          </Text>
+          <View style={styles.headerActionRow}>
+            {isEditing && isSaving ? (
+              <ActivityIndicator size="small" color="#6b7280" />
+            ) : (
+              <Ionicons
+                name={isEditing ? 'checkmark-circle-outline' : 'create-outline'}
+                size={20}
+                color="#2563eb"
+              />
+            )}
+            <Text style={[styles.headerAction, isEditing && isSaving && styles.headerActionMuted]}>
+              {isEditing ? (isSaving ? 'Saving…' : 'Save') : 'Edit'}
+            </Text>
+          </View>
         </Pressable>
       ),
     });
@@ -215,6 +227,11 @@ const styles = StyleSheet.create({
   },
   headerButtonPressed: {
     opacity: 0.6,
+  },
+  headerActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   headerAction: {
     fontSize: 17,

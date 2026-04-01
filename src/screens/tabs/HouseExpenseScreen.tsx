@@ -29,6 +29,7 @@ import {
 import { useExpenseCalendarMonth } from '../../houseExpense/useExpenseCalendarMonth';
 import { useHouseExpenseDashboard } from '../../houseExpense/useHouseExpenseDashboard';
 import type { HouseExpenseStackParamList } from '../../navigation/houseExpenseStackTypes';
+import { financeCalendarTheme, financeColors, financeShadow } from '../../ui/financeTheme';
 
 type HouseHomeNav = NativeStackNavigationProp<HouseExpenseStackParamList, 'HouseExpenseHome'>;
 
@@ -141,10 +142,13 @@ export default function HouseExpenseScreen() {
   return (
     <View style={styles.screen} testID="screen-house-expense">
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        <Text style={styles.screenTitle}>House expense</Text>
-        <Text style={styles.screenCaption}>
-          Tap the combined total for categories. Tap a calendar day for entries that day.
-        </Text>
+        <View style={styles.heroCard}>
+          <Text style={styles.eyebrow}>Spending planner</Text>
+          <Text style={styles.screenTitle}>Stay ahead of monthly household spending.</Text>
+          <Text style={styles.screenCaption}>
+            Tap the combined total for categories. Tap a calendar day for entries that day.
+          </Text>
+        </View>
 
         <Pressable
           testID="house-expense-combined-nav"
@@ -193,15 +197,7 @@ export default function HouseExpenseScreen() {
               }}
               hideExtraDays
               enableSwipeMonths
-              theme={{
-                backgroundColor: '#fff',
-                calendarBackground: '#fff',
-                textSectionTitleColor: '#6b7280',
-                monthTextColor: '#111827',
-                textMonthFontWeight: '600',
-                arrowColor: '#2563eb',
-                todayTextColor: '#2563eb',
-              }}
+              theme={financeCalendarTheme}
               dayComponent={renderCalendarDay}
             />
           </View>
@@ -260,30 +256,47 @@ export default function HouseExpenseScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: financeColors.background,
   },
   centered: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: financeColors.background,
   },
   scrollContent: {
-    paddingBottom: 24,
+    paddingBottom: 120,
+  },
+  heroCard: {
+    marginTop: 16,
+    marginHorizontal: 16,
+    marginBottom: 14,
+    borderRadius: 28,
+    paddingVertical: 22,
+    paddingHorizontal: 20,
+    backgroundColor: financeColors.surfaceStrong,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    ...financeShadow,
+  },
+  eyebrow: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: financeColors.accent,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   screenTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    color: '#111827',
-    paddingHorizontal: 20,
-    paddingTop: 16,
+    marginTop: 8,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '800',
+    color: financeColors.text,
   },
   screenCaption: {
-    marginTop: 6,
+    marginTop: 10,
     fontSize: 15,
-    color: '#6b7280',
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    color: financeColors.textMuted,
   },
   combinedPressable: {
     marginHorizontal: 16,
@@ -303,29 +316,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
   },
   calendarFrame: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 12,
+    borderColor: financeColors.border,
+    borderRadius: 24,
     paddingHorizontal: 8,
     paddingTop: 12,
     paddingBottom: 8,
-    backgroundColor: '#fff',
+    backgroundColor: financeColors.surfaceStrong,
     overflow: 'hidden',
   },
   calendarSectionTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#111827',
+    color: financeColors.text,
     paddingHorizontal: 4,
     marginBottom: 4,
   },
   calendarSectionHint: {
     fontSize: 13,
-    color: '#6b7280',
+    color: financeColors.textMuted,
     paddingHorizontal: 4,
     marginBottom: 8,
   },
@@ -347,44 +358,44 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   calDayCellPressed: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: financeColors.goldSoft,
   },
   calDayNum: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#111827',
+    color: financeColors.text,
   },
   calDayNumDisabled: {
-    color: '#9ca3af',
+    color: '#b8ad9f',
   },
   calDayToday: {
-    color: '#2563eb',
+    color: financeColors.accent,
   },
   calDayAmount: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#15803d',
+    color: financeColors.green,
     marginTop: 2,
     textAlign: 'center',
     maxWidth: '100%',
   },
   masterCard: {
-    borderWidth: 2,
-    borderColor: '#bfdbfe',
-    borderRadius: 12,
-    padding: 14,
-    backgroundColor: '#eff6ff',
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    borderRadius: 24,
+    padding: 18,
+    backgroundColor: financeColors.accent,
   },
   masterTitle: {
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
-    color: '#1e3a8a',
+    color: '#ffffff',
   },
   masterPendingLine: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#15803d',
+    color: '#fff0e8',
     marginBottom: 10,
   },
   masterTrack: {
@@ -393,7 +404,7 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     overflow: 'hidden',
-    backgroundColor: '#e5e7eb',
+    backgroundColor: '#f3b49f',
   },
   cardTop: {
     flexDirection: 'row',
@@ -410,30 +421,30 @@ const styles = StyleSheet.create({
   cardUsedPending: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#374151',
+    color: '#fff4ee',
   },
   usedSegment: {
-    backgroundColor: '#dc2626',
+    backgroundColor: '#7f2317',
     minWidth: 0,
   },
   pendingSegment: {
-    backgroundColor: '#16a34a',
+    backgroundColor: '#ffd4bf',
     minWidth: 0,
   },
   noBudgetTrack: {
     flex: 1,
-    backgroundColor: '#d1d5db',
+    backgroundColor: '#f3b49f',
   },
   percentText: {
     minWidth: 40,
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: '#ffffff',
     textAlign: 'right',
   },
   dayDetailSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: financeColors.textMuted,
     marginBottom: 12,
   },
   dayDetailSpinner: {
@@ -441,7 +452,7 @@ const styles = StyleSheet.create({
   },
   dayDetailEmpty: {
     fontSize: 15,
-    color: '#6b7280',
+    color: financeColors.textMuted,
     marginBottom: 16,
   },
   dayDetailList: {
@@ -454,41 +465,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: financeColors.border,
     gap: 12,
   },
   dayDetailCategory: {
     flex: 1,
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: financeColors.text,
   },
   dayDetailAmount: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: financeColors.text,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(45,36,28,0.3)',
     justifyContent: 'center',
     padding: 24,
   },
   modalCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    backgroundColor: financeColors.surfaceStrong,
+    borderRadius: 24,
     padding: 20,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: financeColors.text,
     marginBottom: 8,
   },
   modalBtn: {
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 10,
+    borderRadius: 14,
     minWidth: 100,
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -497,7 +508,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   modalCloseBtn: {
-    backgroundColor: '#2563eb',
+    backgroundColor: financeColors.accent,
   },
   modalCloseBtnText: {
     fontSize: 16,

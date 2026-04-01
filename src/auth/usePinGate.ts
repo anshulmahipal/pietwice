@@ -43,11 +43,16 @@ export function usePinGate() {
     setUnlockResetToken((token) => token + 1);
   }, []);
 
+  const replaceStoredPin = useCallback((pin: string) => {
+    storedPinRef.current = pin;
+  }, []);
+
   return {
     phase,
     unlockError,
     unlockResetToken,
     submitCreatedPin,
     submitUnlockPin,
+    replaceStoredPin,
   };
 }

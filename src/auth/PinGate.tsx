@@ -3,6 +3,7 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { MainTabs } from '../navigation/MainTabs';
 import { SetLoginPinScreen } from '../screens/SetLoginPinScreen';
+import { PinSessionContext } from './PinSessionContext';
 import { usePinGate } from './usePinGate';
 
 export function PinGate() {
@@ -18,9 +19,13 @@ export function PinGate() {
 
   if (gate.phase === 'authenticated') {
     return (
-      <NavigationContainer>
-        <MainTabs />
-      </NavigationContainer>
+      <PinSessionContext.Provider
+        value={{ replaceStoredPin: gate.replaceStoredPin }}
+      >
+        <NavigationContainer>
+          <MainTabs />
+        </NavigationContainer>
+      </PinSessionContext.Provider>
     );
   }
 
