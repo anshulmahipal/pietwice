@@ -1,5 +1,5 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,7 +15,6 @@ import { formatCalendarDayAmountOnly } from '../../houseExpense/expenseCalendarL
 import {
   aggregateDashboardTotals,
   categoryTitleKey,
-  formatUsedPendingLabel,
   parseAmount,
   progressSegmentLengths,
   usedPercentLabel,
@@ -28,13 +27,11 @@ import {
 } from '../../houseExpense/expenseDate';
 import { useExpenseCalendarMonth } from '../../houseExpense/useExpenseCalendarMonth';
 import { useHouseExpenseDashboard } from '../../houseExpense/useHouseExpenseDashboard';
-import type { HouseExpenseStackParamList } from '../../navigation/houseExpenseStackTypes';
+import { formatInr } from '../../localization/indiaFormat';
 import { financeCalendarTheme, financeColors, financeShadow } from '../../ui/financeTheme';
 
-type HouseHomeNav = NativeStackNavigationProp<HouseExpenseStackParamList, 'HouseExpenseHome'>;
-
 export default function HouseExpenseScreen() {
-  const navigation = useNavigation<HouseHomeNav>();
+  const navigation = useNavigation<any>();
   const { rows, isReady, refresh } = useHouseExpenseDashboard();
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const d = new Date();
@@ -64,6 +61,15 @@ export default function HouseExpenseScreen() {
   const { usedFlex: masterUsedFlex, pendingFlex: masterPendingFlex } = progressSegmentLengths(
     totals.totalBudget,
     totals.totalSpent,
+  );
+  const trackedCategoriesCount = rows.length;
+  const overLimitCount = useMemo(
+    () => rows.filter((row) => parseAmount(row.amount) > 0 && parseAmount(row.spent) > parseAmount(row.amount)).length,
+    [rows],
+  );
+  const uncappedCount = useMemo(
+    () => rows.filter((row) => parseAmount(row.amount) <= 0).length,
+    [rows],
   );
 
   const openDayExpenseDetail = useCallback(
@@ -143,11 +149,95 @@ export default function HouseExpenseScreen() {
     <View style={styles.screen} testID="screen-house-expense">
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.heroCard}>
-          <Text style={styles.eyebrow}>Spending planner</Text>
-          <Text style={styles.screenTitle}>Stay ahead of monthly household spending.</Text>
+          <Text style={styles.eyebrow}>Monthly snapshot</Text>
+          <Text style={styles.screenTitle}>Keep this month simple and under control.</Text>
           <Text style={styles.screenCaption}>
-            Tap the combined total for categories. Tap a calendar day for entries that day.
+            Start here to review spending, jump into the next task, and check daily entries without digging through menus.
           </Text>
+          <View style={styles.heroStatsRow}>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Spent</Text>
+              <Text style={styles.heroStatValue}>{formatInr(totals.totalSpent)}</Text>
+            </View>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Left</Text>
+              <Text style={styles.heroStatValue}>{formatInr(totals.totalPending)}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.sectionWrap}>
+          <Text style={styles.sectionTitle}>Quick actions</Text>
+          <View style={styles.quickActionGrid}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open expense breakdown by category"
+              onPress={() => navigation.navigate('HouseExpenseDetail')}
+              style={({ pressed }) => [styles.quickActionCard, pressed && styles.quickActionPressed]}
+            >
+              <View style={[styles.quickActionIconWrap, styles.quickActionAccent]}>
+                <Ionicons name="list-outline" size={18} color={financeColors.accentStrong} />
+              </View>
+              <Text style={styles.quickActionTitle}>Categories</Text>
+              <Text style={styles.quickActionHint}>Review spending by category</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open Bills tab"
+              onPress={() => navigation.navigate('Bills')}
+              style={({ pressed }) => [styles.quickActionCard, pressed && styles.quickActionPressed]}
+            >
+              <View style={[styles.quickActionIconWrap, styles.quickActionBlue]}>
+                <Ionicons name="receipt-outline" size={18} color={financeColors.blue} />
+              </View>
+              <Text style={styles.quickActionTitle}>Bills</Text>
+              <Text style={styles.quickActionHint}>See what is due next</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open Budget tab"
+              onPress={() => navigation.navigate('Budget')}
+              style={({ pressed }) => [styles.quickActionCard, pressed && styles.quickActionPressed]}
+            >
+              <View style={[styles.quickActionIconWrap, styles.quickActionGold]}>
+                <Ionicons name="pie-chart-outline" size={18} color={financeColors.accentStrong} />
+              </View>
+              <Text style={styles.quickActionTitle}>Budget</Text>
+              <Text style={styles.quickActionHint}>Adjust limits quickly</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open Cards tab"
+              onPress={() => navigation.navigate('Cards')}
+              style={({ pressed }) => [styles.quickActionCard, pressed && styles.quickActionPressed]}
+            >
+              <View style={[styles.quickActionIconWrap, styles.quickActionGreen]}>
+                <Ionicons name="card-outline" size={18} color={financeColors.green} />
+              </View>
+              <Text style={styles.quickActionTitle}>Cards</Text>
+              <Text style={styles.quickActionHint}>Track card bill days</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.sectionWrap}>
+          <Text style={styles.sectionTitle}>Overview</Text>
+          <View style={styles.overviewRow}>
+            <View style={styles.overviewCard}>
+              <Text style={styles.overviewLabel}>Tracked categories</Text>
+              <Text style={styles.overviewValue}>{trackedCategoriesCount}</Text>
+              <Text style={styles.overviewHint}>
+                {uncappedCount === 0 ? 'Every category has a budget.' : `${uncappedCount} without a budget`}
+              </Text>
+            </View>
+            <View style={styles.overviewCard}>
+              <Text style={styles.overviewLabel}>Attention needed</Text>
+              <Text style={styles.overviewValue}>{overLimitCount}</Text>
+              <Text style={styles.overviewHint}>
+                {overLimitCount === 0 ? 'No categories over budget.' : 'Categories already above limit'}
+              </Text>
+            </View>
+          </View>
         </View>
 
         <Pressable
@@ -159,13 +249,15 @@ export default function HouseExpenseScreen() {
         >
           <View style={styles.masterCard} testID="house-expense-dash-master">
             <View style={styles.cardTop}>
-              <Text style={styles.masterTitle}>Combined</Text>
+              <Text style={styles.masterTitle}>Monthly spend plan</Text>
               <Text style={styles.cardUsedPending}>
-                {formatUsedPendingLabel(totals.totalSpent, totals.totalBudget)}
+                {formatInr(totals.totalSpent)} / {totals.totalBudget > 0 ? formatInr(totals.totalBudget) : '—'}
               </Text>
             </View>
             <Text style={styles.masterPendingLine}>
-              Pending: {totals.totalBudget > 0 ? totals.totalPending : '—'}
+              {totals.totalBudget > 0
+                ? `${usedPercentLabel(totals.totalBudget, totals.totalSpent)} used · ${formatInr(totals.totalPending)} left`
+                : `No total budget set yet · Spent ${formatInr(totals.totalSpent)}`}
             </Text>
             <View style={styles.cardBottom}>
               <View style={styles.masterTrack} testID="house-expense-dash-master-progress">
@@ -182,14 +274,14 @@ export default function HouseExpenseScreen() {
                 {usedPercentLabel(totals.totalBudget, totals.totalSpent)}
               </Text>
             </View>
-            <Text style={styles.combinedHint}>Tap for category details →</Text>
+            <Text style={styles.combinedHint}>Open category detail to update and review spending</Text>
           </View>
         </Pressable>
 
         <View style={styles.calendarWrap}>
           <View style={styles.calendarFrame} testID="house-expense-calendar">
-            <Text style={styles.calendarSectionTitle}>Expense calendar</Text>
-            <Text style={styles.calendarSectionHint}>Tap a date to see entries for that day.</Text>
+            <Text style={styles.calendarSectionTitle}>Daily calendar</Text>
+            <Text style={styles.calendarSectionHint}>Tap a date to see the entries saved for that day.</Text>
             <Calendar
               current={calendarCurrentYmd}
               onMonthChange={(m: DateData) => {
@@ -296,11 +388,123 @@ const styles = StyleSheet.create({
   screenCaption: {
     marginTop: 10,
     fontSize: 15,
+    lineHeight: 22,
+    color: financeColors.textMuted,
+  },
+  heroStatsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 18,
+  },
+  heroStatCard: {
+    flex: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surface,
+  },
+  heroStatLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  heroStatValue: {
+    marginTop: 6,
+    fontSize: 20,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  sectionWrap: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    marginBottom: 10,
+    fontSize: 17,
+    fontWeight: '700',
+    color: financeColors.text,
+  },
+  quickActionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  quickActionCard: {
+    width: '48.5%',
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    backgroundColor: financeColors.surfaceStrong,
+  },
+  quickActionPressed: {
+    backgroundColor: financeColors.surface,
+  },
+  quickActionIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickActionAccent: {
+    backgroundColor: financeColors.accentSoft,
+  },
+  quickActionBlue: {
+    backgroundColor: financeColors.blueSoft,
+  },
+  quickActionGold: {
+    backgroundColor: financeColors.goldSoft,
+  },
+  quickActionGreen: {
+    backgroundColor: financeColors.greenSoft,
+  },
+  quickActionTitle: {
+    marginTop: 12,
+    fontSize: 16,
+    fontWeight: '700',
+    color: financeColors.text,
+  },
+  quickActionHint: {
+    marginTop: 4,
+    fontSize: 13,
+    lineHeight: 18,
+    color: financeColors.textMuted,
+  },
+  overviewRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  overviewCard: {
+    flex: 1,
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surfaceStrong,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+  },
+  overviewLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  overviewValue: {
+    marginTop: 8,
+    fontSize: 28,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  overviewHint: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 18,
     color: financeColors.textMuted,
   },
   combinedPressable: {
     marginHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   combinedPressablePressed: {
     opacity: 0.92,
@@ -309,8 +513,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 13,
     fontWeight: '600',
-    color: '#2563eb',
-    textAlign: 'center',
+    color: '#fff4ee',
   },
   calendarWrap: {
     paddingHorizontal: 16,

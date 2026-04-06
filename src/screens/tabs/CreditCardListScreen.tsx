@@ -183,17 +183,48 @@ export function CreditCardListScreen() {
   }
 
   const dayDetailEntries = dayDetailYmd ? dueByYmd[dayDetailYmd] ?? [] : [];
+  const dueDaysThisMonth = Object.keys(dueByYmd).length;
+  const nextDueYmd = Object.keys(dueByYmd).sort()[0] ?? null;
 
   return (
     <View style={styles.screen} testID="screen-credit-card-list">
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.heroCard}>
           <Text style={styles.eyebrow}>Cards tracker</Text>
-          <Text style={styles.heroTitle}>Know every card billing day before your statement cycle catches you.</Text>
+          <Text style={styles.heroTitle}>Stay ahead of every card cycle without extra mental load.</Text>
           <Text style={styles.screenCaption}>
-            Card summary above the calendar lists every card. Highlighted days are bill dates this month.
-            Tap Add above to register a new card.
+            Save each card once, turn reminders on, and use the calendar to spot bill days before they sneak up on you.
           </Text>
+          <View style={styles.heroStatsRow}>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Cards</Text>
+              <Text style={styles.heroStatValue}>{cards.length}</Text>
+              <Text style={styles.heroStatHint}>Tracked in the app</Text>
+            </View>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Next due</Text>
+              <Text style={styles.heroStatValue}>{nextDueYmd ? nextDueYmd.slice(-2) : '—'}</Text>
+              <Text style={styles.heroStatHint}>{nextDueYmd ? nextDueYmd : 'No due dates this month'}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.sectionWrap}>
+          <Text style={styles.sectionTitle}>This month</Text>
+          <View style={styles.overviewRow}>
+            <View style={styles.overviewCard}>
+              <Text style={styles.overviewLabel}>Due days</Text>
+              <Text style={styles.overviewValue}>{dueDaysThisMonth}</Text>
+              <Text style={styles.overviewHint}>Dates with at least one card due</Text>
+            </View>
+            <View style={styles.overviewCard}>
+              <Text style={styles.overviewLabel}>Reminder mode</Text>
+              <Text style={styles.overviewValue}>
+                {remindersEnabled && Platform.OS !== 'web' ? 'On' : 'Off'}
+              </Text>
+              <Text style={styles.overviewHint}>Monthly nudges before bill day</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.reminderRow}>
@@ -228,6 +259,7 @@ export function CreditCardListScreen() {
         </View>
 
         <View style={styles.calendarWrap}>
+          <Text style={styles.sectionTitle}>Calendar</Text>
           <Pressable
             testID="credit-card-count-summary"
             accessibilityRole="button"
@@ -488,6 +520,36 @@ const styles = StyleSheet.create({
     color: financeColors.textMuted,
     lineHeight: 22,
   },
+  heroStatsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 18,
+  },
+  heroStatCard: {
+    flex: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surface,
+  },
+  heroStatLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  heroStatValue: {
+    marginTop: 6,
+    fontSize: 22,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  heroStatHint: {
+    marginTop: 4,
+    fontSize: 12,
+    color: financeColors.textMuted,
+  },
   reminderRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -573,6 +635,46 @@ const styles = StyleSheet.create({
     color: financeColors.textMuted,
     lineHeight: 20,
     marginBottom: 8,
+  },
+  sectionWrap: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    marginBottom: 10,
+    fontSize: 17,
+    fontWeight: '700',
+    color: financeColors.text,
+  },
+  overviewRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  overviewCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surfaceStrong,
+  },
+  overviewLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  overviewValue: {
+    marginTop: 8,
+    fontSize: 28,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  overviewHint: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 18,
+    color: financeColors.textMuted,
   },
   calendarWrap: {
     paddingHorizontal: 16,

@@ -19,7 +19,7 @@ export function ProfileStack() {
         name="ProfileHome"
         component={ProfileScreen}
         options={{
-          title: 'Profile',
+          title: 'More',
           headerTitleAlign: 'center',
         }}
       />

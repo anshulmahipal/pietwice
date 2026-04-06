@@ -9,16 +9,21 @@ import HouseExpenseDetailScreen from './HouseExpenseDetailScreen';
 
 const mockRefresh = jest.fn(() => Promise.resolve());
 const mockSaveSpent = jest.fn(() => Promise.resolve());
+const mockAddExpenseEntries = jest.fn(() => Promise.resolve());
 
 jest.mock('../../houseExpense/useHouseExpenseDashboard', () => ({
   useHouseExpenseDashboard: () => ({
     rows: [
       { title: 'Milk', amount: '100', spent: '25' },
-      { title: 'Water', amount: '', spent: '10' },
+      { title: 'Fruits', amount: '', spent: '10' },
+      { title: 'Vegetable', amount: '', spent: '5' },
+      { title: 'Laundry/Toiletry', amount: '', spent: '8' },
+      { title: 'Grocery', amount: '', spent: '20' },
     ],
     isReady: true,
     refresh: mockRefresh,
     saveSpent: mockSaveSpent,
+    addExpenseEntries: mockAddExpenseEntries,
   }),
 }));
 
@@ -105,5 +110,31 @@ describe('HouseExpenseDetailScreen', () => {
     });
 
     expect(mockSaveSpent).not.toHaveBeenCalled();
+  });
+
+  it('saves a mixed shopping bill and sends remainder to Grocery', async () => {
+    render(<DetailHost />);
+
+    fireEvent.press(screen.getByTestId('house-expense-shopping-bill-trigger'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('house-expense-shopping-bill-modal')).toBeTruthy();
+    });
+
+    fireEvent.changeText(screen.getByTestId('house-expense-shopping-total-input'), '300');
+    fireEvent.changeText(screen.getByTestId('house-expense-shopping-split-Milk'), '40');
+    fireEvent.changeText(screen.getByTestId('house-expense-shopping-split-Fruits'), '90');
+    fireEvent.press(screen.getByTestId('house-expense-shopping-save'));
+
+    await waitFor(() => {
+      expect(mockAddExpenseEntries).toHaveBeenCalledWith(
+        [
+          { title: 'Milk', amount: '40' },
+          { title: 'Fruits', amount: '90' },
+          { title: 'Grocery', amount: '170' },
+        ],
+        '2024-06-15',
+      );
+    });
   });
 });

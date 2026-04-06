@@ -1,5 +1,5 @@
 /**
- * Unit: MainTabs — bottom tabs for House expense, Credit card list, Profile.
+ * Unit: MainTabs — bottom tabs for Home, Bills, Budget, Cards, and More.
  */
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -31,6 +31,18 @@ jest.mock('../creditCards/useCreditCards', () => ({
     isSaving: false,
     formError: null,
     addCard: jest.fn(() => Promise.resolve(false)),
+    clearFormError: jest.fn(),
+  }),
+}));
+
+jest.mock('../budgets/useBudgetsOverview', () => ({
+  useBudgetsOverview: () => ({
+    rows: [],
+    isReady: true,
+    isSaving: false,
+    formError: null,
+    saveBudget: jest.fn(async () => false),
+    reload: jest.fn(async () => {}),
     clearFormError: jest.fn(),
   }),
 }));
@@ -83,14 +95,14 @@ function renderWithNav() {
 }
 
 describe('MainTabs', () => {
-  it('shows House expense on the first tab', () => {
+  it('shows Home on the first tab', () => {
     renderWithNav();
     expect(screen.getByTestId('screen-house-expense')).toBeTruthy();
   });
 
-  it('shows Credit card list tab content after selecting that tab', () => {
+  it('shows Cards tab content after selecting that tab', () => {
     renderWithNav();
-    fireEvent.press(screen.getByLabelText('Credit card list tab'));
+    fireEvent.press(screen.getByLabelText('Cards tab'));
     expect(screen.getByTestId('screen-credit-card-list')).toBeTruthy();
   });
 
@@ -100,9 +112,15 @@ describe('MainTabs', () => {
     expect(screen.getByTestId('screen-bills')).toBeTruthy();
   });
 
-  it('shows Profile tab content after selecting that tab', () => {
+  it('shows Budget tab content after selecting that tab', () => {
     renderWithNav();
-    fireEvent.press(screen.getByLabelText('Profile tab'));
+    fireEvent.press(screen.getByLabelText('Budget tab'));
+    expect(screen.getByTestId('screen-budget-hub')).toBeTruthy();
+  });
+
+  it('shows More tab content after selecting that tab', () => {
+    renderWithNav();
+    fireEvent.press(screen.getByLabelText('More tab'));
     expect(screen.getByTestId('screen-profile')).toBeTruthy();
   });
 });

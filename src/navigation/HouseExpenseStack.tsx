@@ -6,6 +6,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import HouseExpenseDetailScreen from '../screens/tabs/HouseExpenseDetailScreen';
 import HouseExpenseScreen from '../screens/tabs/HouseExpenseScreen';
 import HouseExpenseSettingsScreen from '../screens/tabs/HouseExpenseSettingsScreen';
+import { financeColors } from '../ui/financeTheme';
 import type { HouseExpenseStackParamList } from './houseExpenseStackTypes';
 
 export type { HouseExpenseStackParamList } from './houseExpenseStackTypes';
@@ -24,7 +25,7 @@ export function HouseExpenseStack() {
         name="HouseExpenseHome"
         component={HouseExpenseScreen}
         options={({ navigation }) => ({
-          title: 'House expense',
+          title: 'Home',
           headerTitleAlign: 'center',
           headerRight: () => (
             <Pressable
@@ -34,7 +35,7 @@ export function HouseExpenseStack() {
               onPress={() => navigation.navigate('HouseExpenseSettings')}
               style={({ pressed }) => [styles.headerButton, pressed && styles.headerButtonPressed]}
             >
-              <Ionicons name="settings-outline" size={24} color="#2563eb" />
+              <Ionicons name="settings-outline" size={22} color={financeColors.accentStrong} />
             </Pressable>
           ),
         })}
@@ -61,11 +62,17 @@ export function HouseExpenseStack() {
 
 const styles = StyleSheet.create({
   headerButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: financeColors.accentSoft,
+    borderWidth: 1,
+    borderColor: financeColors.border,
     marginRight: 4,
   },
   headerButtonPressed: {
-    opacity: 0.6,
+    backgroundColor: financeColors.surfaceMuted,
   },
 });

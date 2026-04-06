@@ -1,18 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
 import {
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getStoredPin } from '../../auth/pinSecureStorage';
 import { usePinSession } from '../../auth/PinSessionContext';
 import { useChangePinFlow } from '../../auth/useChangePinFlow';
-import { getStoredPin } from '../../auth/pinSecureStorage';
 import type { ProfileStackParamList } from '../../navigation/profileStackTypes';
 import { financeColors, financeShadow } from '../../ui/financeTheme';
 import { SetLoginPinScreen } from '../SetLoginPinScreen';
@@ -41,125 +42,141 @@ export function ProfileScreen() {
 
   return (
     <View style={styles.container} testID="screen-profile">
-      <View style={styles.heroCard}>
-        <View style={styles.titleRow}>
-          <Ionicons name="person-circle-outline" size={28} color={financeColors.accent} />
-          <Text style={styles.title}>Profile</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.heroCard}>
+          <View style={styles.titleRow}>
+            <Ionicons name="grid-outline" size={28} color={financeColors.accent} />
+            <Text style={styles.title}>More tools</Text>
+          </View>
+          <Text style={styles.caption}>
+            Keep the main tabs focused on daily actions. Extra planning, tracking, and account controls live here.
+          </Text>
+          <View style={styles.heroMiniRow}>
+            <View style={styles.heroMiniCard}>
+              <Text style={styles.heroMiniLabel}>Most used</Text>
+              <Text style={styles.heroMiniValue}>Accounts</Text>
+            </View>
+            <View style={styles.heroMiniCard}>
+              <Text style={styles.heroMiniLabel}>Security</Text>
+              <Text style={styles.heroMiniValue}>PIN lock</Text>
+            </View>
+          </View>
         </View>
-        <Text style={styles.caption}>Manage your finance hubs, security, and account setup.</Text>
-      </View>
 
-      <Text style={styles.sectionLabel}>Finance</Text>
+        <Text style={styles.sectionLabel}>Money tools</Text>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Open insights hub"
-        style={({ pressed }) => [styles.rowButton, pressed && styles.rowButtonPressed]}
-        onPress={() => navigation.navigate('InsightsHub')}
-      >
-        <View style={styles.rowButtonInner}>
-          <View style={styles.rowIconWrap}>
-            <Ionicons name="analytics-outline" size={22} color="#2563eb" />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open accounts hub"
+          style={({ pressed }) => [styles.rowButton, pressed && styles.rowButtonPressed]}
+          onPress={() => navigation.navigate('AccountsHub')}
+        >
+          <View style={styles.rowButtonInner}>
+            <View style={[styles.rowIconWrap, styles.blueIconWrap]}>
+              <Ionicons name="wallet-outline" size={22} color={financeColors.blue} />
+            </View>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowButtonLabel}>Accounts</Text>
+              <Text style={styles.rowButtonHint}>Track balances, cash movement, income, and expenses</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </View>
-          <View style={styles.rowTextCol}>
-            <Text style={styles.rowButtonLabel}>Insights</Text>
-            <Text style={styles.rowButtonHint}>India-focused monthly and FY financial summary</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </View>
-      </Pressable>
+        </Pressable>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Open accounts hub"
-        style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
-        onPress={() => navigation.navigate('AccountsHub')}
-      >
-        <View style={styles.rowButtonInner}>
-          <View style={styles.rowIconWrap}>
-            <Ionicons name="wallet-outline" size={22} color="#2563eb" />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open insights hub"
+          style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
+          onPress={() => navigation.navigate('InsightsHub')}
+        >
+          <View style={styles.rowButtonInner}>
+            <View style={[styles.rowIconWrap, styles.goldIconWrap]}>
+              <Ionicons name="analytics-outline" size={22} color={financeColors.accentStrong} />
+            </View>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowButtonLabel}>Insights</Text>
+              <Text style={styles.rowButtonHint}>See monthly trends, cashflow, and budget pressure</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </View>
-          <View style={styles.rowTextCol}>
-            <Text style={styles.rowButtonLabel}>Accounts</Text>
-            <Text style={styles.rowButtonHint}>Track balances, income, and expense entries</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </View>
-      </Pressable>
+        </Pressable>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Open budgets hub"
-        style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
-        onPress={() => navigation.navigate('BudgetHub')}
-      >
-        <View style={styles.rowButtonInner}>
-          <View style={styles.rowIconWrap}>
-            <Ionicons name="pie-chart-outline" size={22} color="#2563eb" />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open budgets hub"
+          style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
+          onPress={() => navigation.navigate('BudgetHub')}
+        >
+          <View style={styles.rowButtonInner}>
+            <View style={[styles.rowIconWrap, styles.accentIconWrap]}>
+              <Ionicons name="pie-chart-outline" size={22} color={financeColors.accent} />
+            </View>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowButtonLabel}>Budgets</Text>
+              <Text style={styles.rowButtonHint}>Adjust limits when you want tighter control</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </View>
-          <View style={styles.rowTextCol}>
-            <Text style={styles.rowButtonLabel}>Budgets</Text>
-            <Text style={styles.rowButtonHint}>Weekly, bi-weekly, and monthly spending limits</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </View>
-      </Pressable>
+        </Pressable>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Open investments hub"
-        style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
-        onPress={() => navigation.navigate('InvestmentHub')}
-      >
-        <View style={styles.rowButtonInner}>
-          <View style={styles.rowIconWrap}>
-            <Ionicons name="trending-up-outline" size={22} color="#2563eb" />
-          </View>
-          <View style={styles.rowTextCol}>
-            <Text style={styles.rowButtonLabel}>Investments</Text>
-            <Text style={styles.rowButtonHint}>Track holdings and dates like credit cards</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </View>
-      </Pressable>
+        <Text style={styles.sectionLabel}>Optional tracking</Text>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Open insurance hub"
-        style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
-        onPress={() => navigation.navigate('InsuranceHub')}
-      >
-        <View style={styles.rowButtonInner}>
-          <View style={styles.rowIconWrap}>
-            <Ionicons name="shield-checkmark-outline" size={22} color="#2563eb" />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open investments hub"
+          style={({ pressed }) => [styles.rowButton, pressed && styles.rowButtonPressed]}
+          onPress={() => navigation.navigate('InvestmentHub')}
+        >
+          <View style={styles.rowButtonInner}>
+            <View style={[styles.rowIconWrap, styles.greenIconWrap]}>
+              <Ionicons name="trending-up-outline" size={22} color={financeColors.green} />
+            </View>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowButtonLabel}>Investments</Text>
+              <Text style={styles.rowButtonHint}>Keep holdings and key dates in one place</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </View>
-          <View style={styles.rowTextCol}>
-            <Text style={styles.rowButtonLabel}>Insurance</Text>
-            <Text style={styles.rowButtonHint}>Policies, premiums, and renewal calendar</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </View>
-      </Pressable>
+        </Pressable>
 
-      <Text style={styles.sectionLabel}>Security</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open insurance hub"
+          style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
+          onPress={() => navigation.navigate('InsuranceHub')}
+        >
+          <View style={styles.rowButtonInner}>
+            <View style={[styles.rowIconWrap, styles.neutralIconWrap]}>
+              <Ionicons name="shield-checkmark-outline" size={22} color={financeColors.textMuted} />
+            </View>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowButtonLabel}>Insurance</Text>
+              <Text style={styles.rowButtonHint}>Store policy details, premiums, and renewals</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+          </View>
+        </Pressable>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Change entry PIN"
-        style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
-        onPress={() => void handleChangeEntryPin()}
-      >
-        <View style={styles.rowButtonInner}>
-          <View style={styles.rowIconWrap}>
-            <Ionicons name="keypad-outline" size={22} color="#2563eb" />
+        <Text style={styles.sectionLabel}>Security</Text>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Change entry PIN"
+          style={({ pressed }) => [styles.rowButton, pressed && styles.rowButtonPressed]}
+          onPress={() => void handleChangeEntryPin()}
+        >
+          <View style={styles.rowButtonInner}>
+            <View style={[styles.rowIconWrap, styles.accentIconWrap]}>
+              <Ionicons name="keypad-outline" size={22} color={financeColors.accent} />
+            </View>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowButtonLabel}>Change entry PIN</Text>
+              <Text style={styles.rowButtonHint}>Update the 4-digit PIN that protects the app</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </View>
-          <View style={styles.rowTextCol}>
-            <Text style={styles.rowButtonLabel}>Change entry PIN</Text>
-            <Text style={styles.rowButtonHint}>Update your 4-digit app PIN</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </View>
-      </Pressable>
+        </Pressable>
+      </ScrollView>
 
       <Modal
         visible={changePinVisible}
@@ -232,8 +249,11 @@ export function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
     backgroundColor: financeColors.background,
+  },
+  scrollContent: {
+    padding: 24,
+    paddingBottom: 120,
   },
   heroCard: {
     borderRadius: 28,
@@ -257,7 +277,31 @@ const styles = StyleSheet.create({
   caption: {
     marginTop: 8,
     fontSize: 15,
+    lineHeight: 22,
     color: financeColors.textMuted,
+  },
+  heroMiniRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 18,
+  },
+  heroMiniCard: {
+    flex: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surface,
+  },
+  heroMiniLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  heroMiniValue: {
+    marginTop: 6,
+    fontSize: 18,
+    fontWeight: '800',
+    color: financeColors.text,
   },
   sectionLabel: {
     fontSize: 13,
@@ -266,6 +310,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.6,
     marginBottom: 10,
+    marginTop: 4,
   },
   rowButton: {
     paddingVertical: 12,
@@ -290,9 +335,24 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: financeColors.accentSoft,
+    backgroundColor: financeColors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  accentIconWrap: {
+    backgroundColor: financeColors.accentSoft,
+  },
+  blueIconWrap: {
+    backgroundColor: financeColors.blueSoft,
+  },
+  goldIconWrap: {
+    backgroundColor: financeColors.goldSoft,
+  },
+  greenIconWrap: {
+    backgroundColor: financeColors.greenSoft,
+  },
+  neutralIconWrap: {
+    backgroundColor: financeColors.surfaceMuted,
   },
   rowTextCol: {
     flex: 1,

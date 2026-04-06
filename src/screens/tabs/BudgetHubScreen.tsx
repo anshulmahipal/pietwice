@@ -37,6 +37,18 @@ export function BudgetHubScreen() {
     () => rows.find((r) => r.periodType === editingPeriod) ?? null,
     [rows, editingPeriod],
   );
+  const totalBudget = useMemo(
+    () => rows.reduce((sum, row) => sum + parseAmount(row.amount), 0),
+    [rows],
+  );
+  const totalSpent = useMemo(
+    () => rows.reduce((sum, row) => sum + row.spent, 0),
+    [rows],
+  );
+  const riskCount = useMemo(
+    () => rows.filter((row) => row.statusLabel !== 'On track').length,
+    [rows],
+  );
 
   const openEditor = useCallback(
     (periodType: BudgetPeriodType, amount: string) => {
@@ -76,10 +88,33 @@ export function BudgetHubScreen() {
       <ScrollView contentContainerStyle={styles.listContent}>
         <View style={styles.heroCard}>
           <Text style={styles.eyebrow}>Budgets</Text>
-          <Text style={styles.heroTitle}>Shape weekly and monthly spending before it slips.</Text>
+          <Text style={styles.heroTitle}>Set simple spending limits you can actually stick to.</Text>
           <Text style={styles.caption}>
-            Set rolling budgets for weekly, bi-weekly, and monthly periods. Spent values update from your expense entries.
+            Keep weekly and monthly limits visible, then adjust them quickly as your spending changes during the month.
           </Text>
+          <View style={styles.heroStatsRow}>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Planned</Text>
+              <Text style={styles.heroStatValue}>{formatInr(totalBudget)}</Text>
+            </View>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Spent</Text>
+              <Text style={styles.heroStatValue}>{formatInr(totalSpent)}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.overviewRow}>
+          <View style={styles.overviewCard}>
+            <Text style={styles.overviewLabel}>Periods</Text>
+            <Text style={styles.overviewValue}>{rows.length}</Text>
+            <Text style={styles.overviewHint}>Budget views you can edit</Text>
+          </View>
+          <View style={styles.overviewCard}>
+            <Text style={styles.overviewLabel}>Needs attention</Text>
+            <Text style={styles.overviewValue}>{riskCount}</Text>
+            <Text style={styles.overviewHint}>Near limit or already over</Text>
+          </View>
         </View>
 
         {rows.map((row) => {
@@ -198,10 +233,64 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
+  heroStatsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 18,
+  },
+  heroStatCard: {
+    flex: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surface,
+  },
+  heroStatLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  heroStatValue: {
+    marginTop: 6,
+    fontSize: 22,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
   listContent: {
     paddingHorizontal: 16,
     paddingBottom: 120,
     gap: 12,
+  },
+  overviewRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  overviewCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    borderRadius: 22,
+    backgroundColor: financeColors.surfaceStrong,
+    padding: 16,
+  },
+  overviewLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  overviewValue: {
+    marginTop: 8,
+    fontSize: 28,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  overviewHint: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 18,
+    color: financeColors.textMuted,
   },
   rowCard: {
     borderWidth: 1,

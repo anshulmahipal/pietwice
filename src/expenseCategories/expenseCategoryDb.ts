@@ -80,6 +80,11 @@ export type ExpenseLineItemRow = {
   expenseDate: string;
 };
 
+export type ExpenseLineItemDraft = {
+  titleKey: string;
+  amount: string;
+};
+
 async function countCategoryRows(db: SQLite.SQLiteDatabase): Promise<number> {
   const rows = await db.getAllAsync<{ c: number }>(
     `SELECT COUNT(*) AS c FROM ${TABLE_NAME}`,
@@ -177,6 +182,55 @@ export async function upsertCategorySpent(
       expenseDateYmd,
     );
   }
+}
+
+export async function appendExpenseLineItems(
+  entries: ExpenseLineItemDraft[],
+  expenseDateYmd: string,
+): Promise<void> {
+  await initExpenseCategoryStore();
+  const db = await getDatabase();
+  const normalized = entries
+    .map((entry) => ({
+      titleKey: entry.titleKey,
+      amount: spentDeltaForLineItem('0', entry.amount),
+    }))
+    .filter((entry) => entry.titleKey.trim().length > 0 && entry.amount > 0);
+
+  if (normalized.length === 0) {
+    return;
+  }
+
+  const impactedTitleKeys = [...new Set(normalized.map((entry) => entry.titleKey))];
+
+  await db.withTransactionAsync(async () => {
+    for (const entry of normalized) {
+      await db.runAsync(
+        `INSERT INTO ${LINE_ITEMS_TABLE} (title_key, amount, expense_date) VALUES (?, ?, ?)`,
+        entry.titleKey,
+        String(entry.amount),
+        expenseDateYmd,
+      );
+    }
+
+    for (const titleKey of impactedTitleKeys) {
+      const totalRow = await db.getFirstAsync<{ total: number | string | null }>(
+        `SELECT SUM(CAST(amount AS REAL)) AS total
+         FROM ${LINE_ITEMS_TABLE}
+         WHERE title_key = ?`,
+        titleKey,
+      );
+      const total = totalRow?.total;
+      const totalSpent = typeof total === 'number' ? total : parseFloat(String(total ?? '0'));
+      await db.runAsync(
+        `INSERT INTO ${SPENT_TABLE_NAME} (title_key, spent, expense_date) VALUES (?, ?, ?)
+         ON CONFLICT(title_key) DO UPDATE SET spent = excluded.spent, expense_date = excluded.expense_date`,
+        titleKey,
+        String(Number.isFinite(totalSpent) ? totalSpent : 0),
+        expenseDateYmd,
+      );
+    }
+  });
 }
 
 /** Sum of line-item amounts per calendar day for the given month (YYYY-MM-DD → total). */

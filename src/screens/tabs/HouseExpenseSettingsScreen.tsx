@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -10,6 +10,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { parseAmount } from '../../houseExpense/expenseDashboardLogic';
+import { formatInr } from '../../localization/indiaFormat';
+import { financeColors, financeShadow } from '../../ui/financeTheme';
 import { useExpenseCategories } from '../../expenseCategories/useExpenseCategories';
 
 type CategoryTitleFieldProps = {
@@ -34,8 +37,8 @@ function CategoryTitleField({
   return (
     <TextInput
       testID={`house-expense-category-title-${index}`}
-      style={[styles.inputTitle, !editable && styles.inputReadOnly]}
-      placeholder="Title"
+      style={[styles.rowInput, !editable && styles.inputReadOnly]}
+      placeholder="Category name"
       placeholderTextColor="#9ca3af"
       value={value}
       editable={editable}
@@ -69,6 +72,15 @@ export default function HouseExpenseSettingsScreen() {
   const [draftTitle, setDraftTitle] = useState('');
   const [draftAmount, setDraftAmount] = useState('');
 
+  const totalBudget = useMemo(
+    () => categories.reduce((sum, row) => sum + parseAmount(row.amount), 0),
+    [categories],
+  );
+  const uncappedCount = useMemo(
+    () => categories.filter((row) => parseAmount(row.amount) <= 0).length,
+    [categories],
+  );
+
   const handleHeaderAction = useCallback(async () => {
     if (isEditing) {
       await saveCategories();
@@ -98,12 +110,12 @@ export default function HouseExpenseSettingsScreen() {
         >
           <View style={styles.headerActionRow}>
             {isEditing && isSaving ? (
-              <ActivityIndicator size="small" color="#6b7280" />
+              <ActivityIndicator size="small" color={financeColors.textMuted} />
             ) : (
               <Ionicons
                 name={isEditing ? 'checkmark-circle-outline' : 'create-outline'}
                 size={20}
-                color="#2563eb"
+                color={financeColors.accent}
               />
             )}
             <Text style={[styles.headerAction, isEditing && isSaving && styles.headerActionMuted]}>
@@ -124,38 +136,114 @@ export default function HouseExpenseSettingsScreen() {
   if (!isReady) {
     return (
       <View style={styles.centered} testID="house-expense-settings-loading">
-        <ActivityIndicator size="large" color="#2563eb" />
+        <ActivityIndicator size="large" color={financeColors.accent} />
       </View>
     );
   }
 
   return (
     <View style={styles.screen} testID="house-expense-settings-screen">
-      <Text style={styles.lead}>
-        {isEditing
-          ? 'Make changes, then tap Save in the top bar to write them to local SQLite.'
-          : 'Tap Edit to change categories and amounts. Save stores them on this device.'}
-      </Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <View style={styles.heroCard}>
+          <Text style={styles.eyebrow}>Expense categories</Text>
+          <Text style={styles.heroTitle}>Keep categories clean, simple, and easy to maintain.</Text>
+          <Text style={styles.heroCaption}>
+            Use short names and monthly budget amounts. This list powers your home overview and category spending screens.
+          </Text>
+          <View style={styles.heroStatsRow}>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Categories</Text>
+              <Text style={styles.heroStatValue}>{categories.length}</Text>
+            </View>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Budget total</Text>
+              <Text style={styles.heroStatValue}>{formatInr(totalBudget)}</Text>
+            </View>
+          </View>
+        </View>
 
-      <View style={styles.columnHeadings}>
-        <Text style={[styles.headingLabel, styles.headingTitleCol]}>Title</Text>
-        <Text style={[styles.headingLabel, styles.headingAmountCol]}>Amount</Text>
-      </View>
+        <View style={styles.summaryRow}>
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryLabel}>Without budget</Text>
+            <Text style={styles.summaryValue}>{uncappedCount}</Text>
+            <Text style={styles.summaryHint}>Categories still missing a monthly cap</Text>
+          </View>
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryLabel}>Mode</Text>
+            <Text style={styles.summaryValue}>{isEditing ? 'Edit' : 'View'}</Text>
+            <Text style={styles.summaryHint}>
+              {isEditing ? 'Make changes, then save from the header' : 'Tap Edit to update names or budgets'}
+            </Text>
+          </View>
+        </View>
 
-      <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
-        {categories.map((row, index) => (
-          <View key={`${row.title}-${index}`} style={styles.row}>
-            {index > 0 ? <View style={styles.separator} /> : null}
-            <View style={styles.rowInputs}>
+        {isEditing ? (
+          <View style={styles.addCard}>
+            <Text style={styles.sectionTitle}>Add category</Text>
+            <Text style={styles.sectionHint}>Use a simple name and optional monthly budget.</Text>
+            <TextInput
+              testID="house-expense-new-category-title"
+              style={styles.addInput}
+              placeholder="Category name"
+              placeholderTextColor="#9ca3af"
+              value={draftTitle}
+              onChangeText={setDraftTitle}
+              returnKeyType="next"
+            />
+            <TextInput
+              testID="house-expense-new-category-amount"
+              style={styles.addInput}
+              placeholder="Monthly budget amount"
+              placeholderTextColor="#9ca3af"
+              value={draftAmount}
+              onChangeText={setDraftAmount}
+              keyboardType="decimal-pad"
+              returnKeyType="done"
+              onSubmitEditing={handleAdd}
+            />
+            <Pressable
+              testID="house-expense-add-category-button"
+              style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
+              onPress={handleAdd}
+            >
+              <Text style={styles.addButtonLabel}>Add category</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Category list</Text>
+          <Text style={styles.sectionHint}>Each category can have a monthly budget amount.</Text>
+        </View>
+
+        {categories.map((row, index) => {
+          const amountValue = parseAmount(row.amount);
+          return (
+            <View key={`${row.title}-${index}`} style={styles.categoryCard}>
+              <View style={styles.categoryTop}>
+                <View style={styles.categoryBadge}>
+                  <Ionicons name="pricetag-outline" size={16} color={financeColors.accentStrong} />
+                </View>
+                <View style={styles.categoryMeta}>
+                  <Text style={styles.categoryMetaLabel}>Category {index + 1}</Text>
+                  <Text style={styles.categoryMetaHint}>
+                    {amountValue > 0 ? `${formatInr(amountValue)} monthly budget` : 'No budget set yet'}
+                  </Text>
+                </View>
+              </View>
+
+              <Text style={styles.fieldLabel}>Name</Text>
               <CategoryTitleField
                 index={index}
                 committedTitle={row.title}
                 editable={isEditing}
                 onCommit={updateCategoryTitle}
               />
+
+              <Text style={styles.fieldLabel}>Monthly budget</Text>
               <TextInput
                 testID={`house-expense-category-amount-${index}`}
-                style={[styles.inputAmount, !isEditing && styles.inputReadOnly]}
+                style={[styles.rowInput, !isEditing && styles.inputReadOnly]}
                 placeholder="0"
                 placeholderTextColor="#9ca3af"
                 value={row.amount}
@@ -165,46 +253,9 @@ export default function HouseExpenseSettingsScreen() {
                 returnKeyType="done"
               />
             </View>
-          </View>
-        ))}
-        <View style={styles.listFooterSpacer} />
+          );
+        })}
       </ScrollView>
-
-      {isEditing ? (
-        <View style={styles.addBlock}>
-          <Text style={styles.addHeading}>Add category</Text>
-          <View style={styles.addRow}>
-            <TextInput
-              testID="house-expense-new-category-title"
-              style={styles.inputTitle}
-              placeholder="Title"
-              placeholderTextColor="#9ca3af"
-              value={draftTitle}
-              onChangeText={setDraftTitle}
-              onSubmitEditing={handleAdd}
-              returnKeyType="next"
-            />
-            <TextInput
-              testID="house-expense-new-category-amount"
-              style={styles.inputAmount}
-              placeholder="Amount"
-              placeholderTextColor="#9ca3af"
-              value={draftAmount}
-              onChangeText={setDraftAmount}
-              keyboardType="decimal-pad"
-              onSubmitEditing={handleAdd}
-              returnKeyType="done"
-            />
-            <Pressable
-              testID="house-expense-add-category-button"
-              style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
-              onPress={handleAdd}
-            >
-              <Text style={styles.addButtonLabel}>Add</Text>
-            </Pressable>
-          </View>
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -212,13 +263,19 @@ export default function HouseExpenseSettingsScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: financeColors.background,
   },
   centered: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: financeColors.background,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 120,
+    gap: 12,
   },
   headerButton: {
     paddingHorizontal: 12,
@@ -235,111 +292,134 @@ const styles = StyleSheet.create({
   },
   headerAction: {
     fontSize: 17,
-    color: '#2563eb',
-    fontWeight: '500',
+    color: financeColors.accent,
+    fontWeight: '700',
   },
   headerActionMuted: {
-    color: '#6b7280',
+    color: financeColors.textMuted,
   },
-  lead: {
+  heroCard: {
+    borderRadius: 28,
+    paddingVertical: 22,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 8,
+    backgroundColor: financeColors.surfaceStrong,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    ...financeShadow,
+  },
+  eyebrow: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: financeColors.accent,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  heroTitle: {
+    marginTop: 8,
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  heroCaption: {
+    marginTop: 10,
     fontSize: 15,
     lineHeight: 22,
-    color: '#4b5563',
+    color: financeColors.textMuted,
   },
-  columnHeadings: {
+  heroStatsRow: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingBottom: 6,
-    gap: 12,
+    gap: 10,
+    marginTop: 18,
   },
-  headingLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#6b7280',
-  },
-  headingTitleCol: {
-    flex: 1.4,
-  },
-  headingAmountCol: {
+  heroStatCard: {
     flex: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surface,
   },
-  list: {
-    flex: 1,
+  heroStatLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
   },
-  listContent: {
-    paddingBottom: 8,
+  heroStatValue: {
+    marginTop: 6,
+    fontSize: 22,
+    fontWeight: '800',
+    color: financeColors.text,
   },
-  row: {
-    backgroundColor: '#fff',
-  },
-  rowInputs: {
+  summaryRow: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    gap: 12,
-    alignItems: 'center',
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#e5e7eb',
-    marginLeft: 20,
-  },
-  listFooterSpacer: {
-    height: 16,
-  },
-  inputTitle: {
-    flex: 1.4,
-    minHeight: 44,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    color: '#111827',
-    backgroundColor: '#fff',
-  },
-  inputAmount: {
-    flex: 1,
-    minHeight: 44,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    color: '#111827',
-    backgroundColor: '#fff',
-  },
-  inputReadOnly: {
-    backgroundColor: '#f3f4f6',
-    color: '#374151',
-  },
-  addBlock: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#e5e7eb',
-    backgroundColor: '#f9fafb',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  addHeading: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 10,
-  },
-  addRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 10,
   },
-  addButton: {
+  summaryCard: {
+    flex: 1,
+    borderRadius: 22,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    backgroundColor: financeColors.surfaceStrong,
+  },
+  summaryLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  summaryValue: {
+    marginTop: 8,
+    fontSize: 28,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  summaryHint: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 18,
+    color: financeColors.textMuted,
+  },
+  addCard: {
+    borderRadius: 24,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    backgroundColor: financeColors.surfaceStrong,
+  },
+  sectionHeader: {
+    marginTop: 2,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: financeColors.text,
+  },
+  sectionHint: {
+    marginTop: 4,
+    fontSize: 13,
+    lineHeight: 18,
+    color: financeColors.textMuted,
+  },
+  addInput: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    borderRadius: 14,
     paddingHorizontal: 14,
-    minHeight: 44,
+    fontSize: 16,
+    color: financeColors.text,
+    backgroundColor: financeColors.surface,
+    marginTop: 12,
+  },
+  addButton: {
+    marginTop: 14,
+    minHeight: 48,
+    borderRadius: 14,
+    alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
-    backgroundColor: '#2563eb',
+    backgroundColor: financeColors.accent,
   },
   addButtonPressed: {
     opacity: 0.85,
@@ -347,6 +427,61 @@ const styles = StyleSheet.create({
   addButtonLabel: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+  },
+  categoryCard: {
+    borderRadius: 24,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    backgroundColor: financeColors.surfaceStrong,
+  },
+  categoryTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 14,
+  },
+  categoryBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: financeColors.accentSoft,
+  },
+  categoryMeta: {
+    flex: 1,
+  },
+  categoryMetaLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: financeColors.text,
+  },
+  categoryMetaHint: {
+    marginTop: 3,
+    fontSize: 13,
+    color: financeColors.textMuted,
+  },
+  fieldLabel: {
+    marginBottom: 6,
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  rowInput: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    fontSize: 16,
+    color: financeColors.text,
+    backgroundColor: financeColors.surface,
+    marginBottom: 12,
+  },
+  inputReadOnly: {
+    backgroundColor: financeColors.surfaceMuted,
+    color: financeColors.text,
   },
 });

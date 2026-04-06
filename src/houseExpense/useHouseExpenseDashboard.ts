@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import {
+  appendExpenseLineItems,
   loadCategorySpentMap,
   loadExpenseCategoriesFromDb,
   upsertCategorySpent,
@@ -9,6 +10,11 @@ import { categoryTitleKey } from './expenseDashboardLogic';
 
 export type HouseExpenseDashboardRow = ExpenseCategoryRow & {
   spent: string;
+};
+
+export type HouseExpenseEntryDraft = {
+  title: string;
+  amount: string;
 };
 
 export function useHouseExpenseDashboard() {
@@ -38,10 +44,25 @@ export function useHouseExpenseDashboard() {
     [refresh],
   );
 
+  const addExpenseEntries = useCallback(
+    async (entries: HouseExpenseEntryDraft[], expenseDateYmd: string) => {
+      await appendExpenseLineItems(
+        entries.map((entry) => ({
+          titleKey: categoryTitleKey(entry.title),
+          amount: entry.amount,
+        })),
+        expenseDateYmd,
+      );
+      await refresh();
+    },
+    [refresh],
+  );
+
   return {
     rows,
     isReady,
     refresh,
     saveSpent,
+    addExpenseEntries,
   };
 }

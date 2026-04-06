@@ -168,16 +168,47 @@ export function BillsScreen() {
   }
 
   const dayEntries = dayDetailYmd ? dueByYmd[dayDetailYmd] ?? [] : [];
+  const monthlyBillsCount = bills.filter((bill) => bill.recurrenceType === 'monthly').length;
+  const oneTimeBillsCount = bills.length - monthlyBillsCount;
+  const totalTrackedAmount = bills.reduce((sum, bill) => sum + (Number(bill.amount) || 0), 0);
 
   return (
     <View style={styles.screen} testID="screen-bills">
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.heroCard}>
           <Text style={styles.eyebrow}>Bills planner</Text>
-          <Text style={styles.heroTitle}>Track every due date before it becomes a late fee.</Text>
+          <Text style={styles.heroTitle}>Keep every upcoming payment visible and on time.</Text>
           <Text style={styles.screenCaption}>
-            Organize one-time and monthly bills. Use reminders to stay ahead of due dates.
+            Add recurring and one-time bills, switch reminders on, and use the calendar as your monthly payment plan.
           </Text>
+          <View style={styles.heroStatsRow}>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Tracked</Text>
+              <Text style={styles.heroStatValue}>{bills.length}</Text>
+              <Text style={styles.heroStatHint}>Bills in your planner</Text>
+            </View>
+            <View style={styles.heroStatCard}>
+              <Text style={styles.heroStatLabel}>Amount</Text>
+              <Text style={styles.heroStatValue}>{formatInr(totalTrackedAmount)}</Text>
+              <Text style={styles.heroStatHint}>Across saved bills</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.sectionWrap}>
+          <Text style={styles.sectionTitle}>This setup</Text>
+          <View style={styles.overviewRow}>
+            <View style={styles.overviewCard}>
+              <Text style={styles.overviewLabel}>Monthly</Text>
+              <Text style={styles.overviewValue}>{monthlyBillsCount}</Text>
+              <Text style={styles.overviewHint}>Repeats every month</Text>
+            </View>
+            <View style={styles.overviewCard}>
+              <Text style={styles.overviewLabel}>One-time</Text>
+              <Text style={styles.overviewValue}>{oneTimeBillsCount}</Text>
+              <Text style={styles.overviewHint}>Single upcoming payments</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.reminderRow}>
@@ -212,6 +243,7 @@ export function BillsScreen() {
         </View>
 
         <View style={styles.calendarWrap}>
+          <Text style={styles.sectionTitle}>Calendar</Text>
           <Pressable
             testID="bills-count-summary"
             accessibilityRole="button"
@@ -509,6 +541,76 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: financeColors.textMuted,
     lineHeight: 22,
+  },
+  heroStatsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 18,
+  },
+  heroStatCard: {
+    flex: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surface,
+  },
+  heroStatLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  heroStatValue: {
+    marginTop: 6,
+    fontSize: 22,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  heroStatHint: {
+    marginTop: 4,
+    fontSize: 12,
+    color: financeColors.textMuted,
+  },
+  sectionWrap: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    marginBottom: 10,
+    fontSize: 17,
+    fontWeight: '700',
+    color: financeColors.text,
+  },
+  overviewRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  overviewCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: financeColors.border,
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    backgroundColor: financeColors.surfaceStrong,
+  },
+  overviewLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  overviewValue: {
+    marginTop: 8,
+    fontSize: 28,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  overviewHint: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 18,
+    color: financeColors.textMuted,
   },
   reminderRow: {
     marginHorizontal: 16,

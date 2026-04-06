@@ -12,7 +12,7 @@ describe('SetLoginPinScreen', () => {
 
     expect(screen.getByText('Set login PIN')).toBeTruthy();
     expect(
-      screen.getByText('Enter 4 digits. Use the keypad below — your phone keyboard will not open.'),
+      screen.getByText('Enter 4 digits. Use the keypad below; your phone keyboard will stay closed.'),
     ).toBeTruthy();
   });
 

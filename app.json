@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "monthlyExpense",
-    "slug": "monthlyExpense",
+    "slug": "nidhita",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,9 +12,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.logicnib.monthlyexpense"
     },
     "android": {
+      "package": "com.logicnib.monthlyexpense",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -31,6 +33,12 @@
       "expo-sqlite",
       "expo-notifications",
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e9401516-cbb4-4032-a973-9b7c570ffd54"
+      }
+    },
+    "owner": "logicnib"
   }
 }
