@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "monthlyExpense",
-    "slug": "nidhita",
+    "name": "BondWallet",
+    "slug": "bondwallet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,13 +13,13 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.logicnib.monthlyexpense",
+      "bundleIdentifier": "com.logicnib.bondwallet",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.logicnib.monthlyexpense",
+      "package": "com.logicnib.bondwallet",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -37,11 +37,11 @@
       "expo-notifications",
       "@react-native-community/datetimepicker"
     ],
+    "owner": "logicnib",
     "extra": {
       "eas": {
-        "projectId": "e9401516-cbb4-4032-a973-9b7c570ffd54"
+        "projectId": "57116293-7845-4d91-8b33-9f2d04c1ee1e"
       }
-    },
-    "owner": "logicnib"
+    }
   }
 }
