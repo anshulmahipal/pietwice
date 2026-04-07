@@ -6,7 +6,7 @@ Add a row when you ship a new feature; keep names stable so history stays search
 
 | Canonical name | Also called | What it is | Main code | Tests |
 | --- | --- | --- | --- | --- |
-| **App shell** | Root layout | Safe area, status bar, wraps app with `PinGate`. | `App.tsx` | — |
+| **App shell** | Root layout | Safe area, status bar, wraps app with `PinGate`. | `App.tsx` | `App.test.tsx` |
 | **Pin gate** | App lock, PIN unlock | Blocks main UI until PIN is set/verified; secure storage; exposes session `replaceStoredPin` for in-app PIN updates. | `src/auth/PinGate.tsx`, `src/auth/usePinGate.ts`, `src/auth/PinSessionContext.tsx`, `src/auth/pinGateLogic.ts`, `src/auth/pinSecureStorage.ts` | `pinGateLogic.test.ts`, `usePinGate.test.tsx` |
 | **Set login PIN** | First-time PIN | Screen to create the login PIN; keypad backspace uses an icon. | `src/screens/SetLoginPinScreen.tsx` | `SetLoginPinScreen.test.tsx` |
 | **PIN entry** | Keypad logic | Shared logic for entering/validating PIN digits. | `src/pin/pinEntryLogic.ts` | `pinEntryLogic.test.ts` |
@@ -23,9 +23,9 @@ Add a row when you ship a new feature; keep names stable so history stays search
 | **Accounts hub** | Ledger, cashflow | Manual accounts (bank/cash/wallet/credit card), running balances, add income/expense entries, month cashflow summary and recent ledger list. SQLite `accounts` + `account_entries`. | `src/screens/tabs/AccountsHubScreen.tsx`, `src/accounts/*` | `AccountsHubScreen.test.tsx`, `accountLogic.test.ts`, `useAccountsLedger.test.tsx` |
 | **Budget hub** | Budget planner, limits | Period budgets (weekly, bi-weekly, monthly), live spent totals from expense line items, status states (on track/near/over/critical), modal editor per period. | `src/screens/tabs/BudgetHubScreen.tsx`, `src/budgets/*`, `src/expenseCategories/expenseCategoryDb.ts` | `BudgetHubScreen.test.tsx`, `budgetLogic.test.ts`, `useBudgetsOverview.test.tsx` |
 | **Insights hub** | Finance dashboard, India summary | This-month and FY-to-date metrics, upcoming 30-day bill obligations, budget risk ranking; values formatted in INR. | `src/screens/tabs/InsightsHubScreen.tsx`, `src/insights/useInsightsOverview.ts`, `src/localization/indiaFormat.ts` | `InsightsHubScreen.test.tsx`, `useInsightsOverview.test.tsx`, `indiaFormat.test.ts` |
-| **Finance hub layout** | Shared finance shell | Scroll + caption, blue summary tile (count, tap for list placeholder), bordered month calendar (`react-native-calendars`). Used by investment/insurance hubs. | `src/financeHub/FinanceHubLayout.tsx` | `FinanceHubLayout.test.tsx` |
-| **Investment hub** | Investments | Entry from Profile; same layout pattern as credit cards (count + calendar). Header **Add** and summary tap → “coming soon” alerts until data layer exists. | `src/screens/tabs/InvestmentHubScreen.tsx` | `ProfileScreen.test.tsx` |
-| **Insurance hub** | Insurance | Entry from Profile; same shell as investments with policy-focused copy. Header **Add** and summary → placeholders. | `src/screens/tabs/InsuranceHubScreen.tsx` | `ProfileScreen.test.tsx` |
+| **Finance hub layout** | Shared finance shell | Scroll + caption, summary tile (count, tap opens list on hubs), bordered month calendar with optional `markedDates`, month swipe, and day press. Uses `financeCalendarTheme`. | `src/financeHub/FinanceHubLayout.tsx`, `src/financeHub/monthlyDayCalendarLogic.ts`, `src/financeHub/monthlyDayInputLogic.ts` | `FinanceHubLayout.test.tsx`, `monthlyDayCalendarLogic.test.ts`, `monthlyDayInputLogic.test.ts` |
+| **Investment hub** | Investments | SQLite `investments` (holding name + monthly activity day); Profile entry: count, calendar dots, header **Add** sheet, summary list modal, day-detail modal. | `src/screens/tabs/InvestmentHubScreen.tsx`, `src/investments/*`, `src/financeHub/financeEntityHubModalStyles.ts` | `InvestmentHubScreen.test.tsx`, `investmentDb.test.ts`, `investmentLogic.test.ts`, `useInvestments.test.tsx`, `ProfileScreen.test.tsx` |
+| **Insurance hub** | Insurance | SQLite `insurance_policies` (policy name + reminder/renewal day); same hub UX as investments with policy copy. | `src/screens/tabs/InsuranceHubScreen.tsx`, `src/insurancePolicies/*` | `InsuranceHubScreen.test.tsx`, `insurancePolicyDb.test.ts`, `insurancePolicyLogic.test.ts`, `useInsurancePolicies.test.tsx`, `ProfileScreen.test.tsx` |
 
 ## How to use with an assistant
 

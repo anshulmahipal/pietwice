@@ -104,9 +104,10 @@ describe('HouseExpenseScreen', () => {
 
     expect(screen.getByTestId('house-expense-dash-master')).toBeTruthy();
     expect(screen.getByTestId('house-expense-dash-master-progress')).toBeTruthy();
-    expect(screen.getByText('Combined')).toBeTruthy();
-    expect(screen.getByText('35 / 100')).toBeTruthy();
-    expect(screen.getByText('Pending: 65')).toBeTruthy();
+    expect(screen.getByText('Monthly spend plan')).toBeTruthy();
+    const master = screen.getByTestId('house-expense-dash-master');
+    expect(within(master).getByText('₹35.00 / ₹100.00')).toBeTruthy();
+    expect(within(master).getByText('35% used · ₹65.00 left')).toBeTruthy();
     expect(screen.getAllByText('35%').length).toBeGreaterThanOrEqual(1);
 
     expect(screen.queryByTestId('house-expense-dash-row-0')).toBeNull();
@@ -126,7 +127,7 @@ describe('HouseExpenseScreen', () => {
 
     const calendarBlock = screen.getByTestId('house-expense-calendar');
     expect(calendarBlock).toBeTruthy();
-    expect(screen.getByText('Expense calendar')).toBeTruthy();
+    expect(screen.getByText('Daily calendar')).toBeTruthy();
     expect(within(calendarBlock).getByText('35')).toBeTruthy();
 
     fireEvent.press(screen.getByTestId('house-expense-cal-day-2024-06-15'));

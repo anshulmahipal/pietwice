@@ -1,0 +1,24 @@
+---
+description: Keep FEATURES.md in sync when features or their primary code paths change
+alwaysApply: true
+---
+
+# Feature registry (`FEATURES.md`)
+
+The canonical feature list lives at **`FEATURES.md`** (repo root). Treat it as part of the change when you develop or modify features.
+
+## When to update (same change / same PR)
+
+- **New feature** or user-facing flow: add a table row with canonical name, aliases, short description, main code paths, and test files (or `—` if none yet).
+- **Rename or remove** a feature: update or remove the row; fix any broken path references.
+- **Move or split** implementation: update **Main code** and **Tests** columns to match reality.
+- **Placeholder → real** behavior: replace placeholder wording in **What it is** and add tests to the row when you add them.
+
+## What not to do
+
+- Do not rewrite the whole file for tiny refactors if the registry row is still accurate.
+- This file is **not** unsolicited documentation—it is the agreed project index; updating it is allowed and expected alongside feature work.
+
+## Consistency
+
+- Prefer **Canonical name** values from the table when scoping work (aligns with `tdd-human-centric-development` unit naming).

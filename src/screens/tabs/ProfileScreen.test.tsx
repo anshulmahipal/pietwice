@@ -60,6 +60,28 @@ jest.mock('../../accounts/useAccountsLedger', () => ({
   }),
 }));
 
+jest.mock('../../investments/useInvestments', () => ({
+  useInvestments: () => ({
+    holdings: [],
+    isReady: true,
+    isSaving: false,
+    formError: null,
+    addHolding: jest.fn(async () => true),
+    clearFormError: jest.fn(),
+  }),
+}));
+
+jest.mock('../../insurancePolicies/useInsurancePolicies', () => ({
+  useInsurancePolicies: () => ({
+    policies: [],
+    isReady: true,
+    isSaving: false,
+    formError: null,
+    addPolicy: jest.fn(async () => true),
+    clearFormError: jest.fn(),
+  }),
+}));
+
 jest.mock('../../insights/useInsightsOverview', () => ({
   useInsightsOverview: () => ({
     isReady: true,

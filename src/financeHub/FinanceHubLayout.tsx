@@ -1,6 +1,12 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, type DateData } from 'react-native-calendars';
+import { financeCalendarTheme } from '../ui/financeTheme';
+
+export type FinanceHubMarkedDate = {
+  marked?: boolean;
+  dotColor?: string;
+};
 
 export type FinanceHubLayoutProps = {
   screenTestId: string;
@@ -15,6 +21,12 @@ export type FinanceHubLayoutProps = {
   calendarTestId: string;
   currentMonthYmd: string;
   onPressSummary: () => void;
+  /** When set, calendar highlights days (e.g. recurring activity / renewal days). */
+  markedDates?: Record<string, FinanceHubMarkedDate>;
+  /** Fires when the user swipes to another month (month is 1–12). */
+  onMonthChange?: (next: { year: number; month: number }) => void;
+  /** Fires when a day cell is pressed (parent decides whether to show detail). */
+  onCalendarDayPress?: (dateString: string) => void;
 };
 
 export function FinanceHubLayout({
@@ -30,6 +42,9 @@ export function FinanceHubLayout({
   calendarTestId,
   currentMonthYmd,
   onPressSummary,
+  markedDates,
+  onMonthChange,
+  onCalendarDayPress,
 }: FinanceHubLayoutProps) {
   return (
     <View style={styles.screen} testID={screenTestId}>
@@ -57,13 +72,22 @@ export function FinanceHubLayout({
               current={currentMonthYmd}
               hideExtraDays
               enableSwipeMonths
-              theme={{
-                todayTextColor: '#2563eb',
-                selectedDayBackgroundColor: '#2563eb',
-                arrowColor: '#2563eb',
-                monthTextColor: '#111827',
-                textMonthFontWeight: '600',
-              }}
+              markedDates={markedDates}
+              onMonthChange={
+                onMonthChange
+                  ? (m: DateData) => {
+                      onMonthChange({ year: m.year, month: m.month });
+                    }
+                  : undefined
+              }
+              onDayPress={
+                onCalendarDayPress
+                  ? (d: DateData) => {
+                      onCalendarDayPress(d.dateString);
+                    }
+                  : undefined
+              }
+              theme={financeCalendarTheme}
             />
           </View>
         </View>

@@ -1,0 +1,31 @@
+---
+description: TDD-first workflow, readable code, unit naming, and proactive collaboration for this repo
+alwaysApply: true
+---
+
+# TDD and human-centric development
+
+## Test-driven development (mandatory)
+
+- Before adding or refactoring **functional logic**, write or extend **unit tests** for the behavior first.
+- Follow **red → green → refactor**: failing test, minimal implementation to pass, then cleanup with tests still green.
+- Colocate or mirror tests so paths and suite names reflect the **same unit** as production code (e.g. `ExpenseService` ↔ `expenseService.test.ts` or project convention).
+
+## Human-readable code
+
+- Prefer clarity over cleverness: small functions, one main responsibility, intention-revealing names.
+- Align with existing project patterns (naming, imports, structure); avoid drive-by refactors outside the requested change.
+
+## Unit context (naming)
+
+- When working on a feature or fix, identify the **Unit Name** (component, service, module, or hook) and keep file paths, test `describe`/`it` titles, and commits scoped to that unit unless the task explicitly spans multiple units.
+
+## Collaboration
+
+- If requirements are ambiguous, ask for clarification **before** locking in tests or APIs.
+- Proactively suggest better architecture, missing edge cases in tests, or libraries that fit the stack—then implement per agreement.
+
+## Scope of changes
+
+- Touch only what the task needs; do not add unsolicited markdown docs or unrelated files.
+- Exception: when feature surface area or listed paths change, update **`FEATURES.md`** per the **feature-registry-sync** rule.
