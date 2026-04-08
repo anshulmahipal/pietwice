@@ -21,6 +21,12 @@ jest.mock('@react-native-community/datetimepicker', () => {
   return ({ testID }) => React.createElement(View, { testID });
 });
 
+jest.mock('expo-updates', () => ({
+  checkForUpdateAsync: jest.fn(async () => ({ isAvailable: false })),
+  fetchUpdateAsync: jest.fn(async () => ({})),
+  reloadAsync: jest.fn(async () => {}),
+}));
+
 jest.mock('expo-notifications', () => ({
   setNotificationHandler: jest.fn(),
   getPermissionsAsync: jest.fn(async () => ({ status: 'granted', granted: true, expires: 'never' })),

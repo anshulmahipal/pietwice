@@ -18,7 +18,9 @@
     "prebuild:clean:android": "expo prebuild --clean --platform android",
     "prebuild:clean:ios": "expo prebuild --clean --platform ios",
     "prebuild:clean:web": "expo prebuild --clean --platform web",
-    "prebuild:clean:all": "expo prebuild --clean --platform android --platform ios --platform web"
+    "prebuild:clean:all": "expo prebuild --clean --platform android --platform ios --platform web",
+    "update:production": "eas update --channel production",
+    "update:preview": "eas update --channel preview"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -36,6 +38,7 @@
     "expo-sharing": "~14.0.8",
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
+    "expo-updates": "~29.0.16",
     "react": "19.1.0",
     "react-native": "0.81.5",
     "react-native-calendars": "^1.1314.0",

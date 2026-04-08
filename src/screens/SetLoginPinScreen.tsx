@@ -1,12 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Edge } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -76,55 +70,50 @@ export function SetLoginPinScreen({
       testID="set-login-pin-screen"
       {...(safeAreaEdges ? { edges: safeAreaEdges } : {})}
     >
-      <View style={styles.scrollHost}>
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator
-          testID="set-login-pin-scroll"
-        >
-        <View style={styles.heroCard}>
-          <Text style={styles.eyebrow}>Secure access</Text>
-          <Text style={styles.title}>{title}</Text>
-          <View style={styles.introBlock}>
-            <Text style={styles.subtitle}>{subtitle}</Text>
-            {errorMessage ? (
-              <View style={styles.errorPill}>
-                <Ionicons name="alert-circle-outline" size={16} color={financeColors.danger} />
-                <Text style={styles.error} accessibilityRole="alert">
-                  {errorMessage}
-                </Text>
-              </View>
-            ) : null}
-          </View>
-        </View>
-
-        <View style={styles.pinCard}>
-          <Text style={styles.pinCardLabel}>4-digit PIN</Text>
-          <Text style={styles.pinCardHint}>Enter one digit at a time using the keypad.</Text>
-
-          <View style={styles.slotsRow} accessibilityRole="none">
-            {Array.from({ length: PIN_LENGTH }, (_, index) => {
-              const filled = index < pin.length;
-              return (
-                <View
-                  key={index}
-                  testID={`pin-slot-${index}`}
-                  style={[styles.slot, filled && styles.slotFilled]}
-                  accessibilityLabel={`PIN digit ${index + 1} ${filled ? 'filled' : 'empty'}`}
-                >
-                  {filled ? <View style={styles.slotInner} /> : null}
+      <View style={styles.body} testID="set-login-pin-layout">
+        <View style={styles.topBlock}>
+          <View style={styles.heroCard}>
+            <Text style={styles.eyebrow}>Secure access</Text>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.introBlock}>
+              <Text style={styles.subtitle}>{subtitle}</Text>
+              {errorMessage ? (
+                <View style={styles.errorPill}>
+                  <Ionicons name="alert-circle-outline" size={16} color={financeColors.danger} />
+                  <Text style={styles.error} accessibilityRole="alert">
+                    {errorMessage}
+                  </Text>
                 </View>
-              );
-            })}
+              ) : null}
+            </View>
           </View>
 
-          <Text style={styles.progressText}>
-            {pin.length === 0
-              ? 'Waiting for input'
-              : `${pin.length} of ${PIN_LENGTH} digits entered`}
-          </Text>
+          <View style={styles.pinCard}>
+            <Text style={styles.pinCardLabel}>4-digit PIN</Text>
+            <Text style={styles.pinCardHint}>Enter one digit at a time using the keypad.</Text>
+
+            <View style={styles.slotsRow} accessibilityRole="none">
+              {Array.from({ length: PIN_LENGTH }, (_, index) => {
+                const filled = index < pin.length;
+                return (
+                  <View
+                    key={index}
+                    testID={`pin-slot-${index}`}
+                    style={[styles.slot, filled && styles.slotFilled]}
+                    accessibilityLabel={`PIN digit ${index + 1} ${filled ? 'filled' : 'empty'}`}
+                  >
+                    {filled ? <View style={styles.slotInner} /> : null}
+                  </View>
+                );
+              })}
+            </View>
+
+            <Text style={styles.progressText}>
+              {pin.length === 0
+                ? 'Waiting for input'
+                : `${pin.length} of ${PIN_LENGTH} digits entered`}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.keypadCard}>
@@ -175,7 +164,6 @@ export function SetLoginPinScreen({
             ))}
           </View>
         </View>
-        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -196,15 +184,13 @@ const styles = StyleSheet.create({
   screenEmbedded: {
     paddingTop: 12,
   },
-  scrollHost: {
+  body: {
     flex: 1,
     minHeight: 0,
   },
-  scroll: {
+  topBlock: {
     flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 32,
+    minHeight: 0,
   },
   heroCard: {
     borderRadius: 30,

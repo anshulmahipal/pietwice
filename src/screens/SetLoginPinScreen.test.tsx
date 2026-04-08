@@ -10,7 +10,7 @@ describe('SetLoginPinScreen', () => {
   it('renders title and helper copy for a four-digit numeric PIN', () => {
     render(<SetLoginPinScreen />);
 
-    expect(screen.getByTestId('set-login-pin-scroll')).toBeTruthy();
+    expect(screen.getByTestId('set-login-pin-layout')).toBeTruthy();
     expect(screen.getByText('Set login PIN')).toBeTruthy();
     expect(
       screen.getByText('Enter 4 digits. Use the keypad below; your phone keyboard will stay closed.'),
