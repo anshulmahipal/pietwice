@@ -1,20 +1,15 @@
 import * as SQLite from 'expo-sqlite';
+import { getMonthlyExpenseSqliteDb, resetMonthlyExpenseSqliteConnection } from '../database/monthlyExpenseSqliteDb';
 import type { BillRecurrenceType, BillRow } from './billsLogic';
 
-const DATABASE_NAME = 'monthly_expense.db';
 const TABLE_NAME = 'bills';
 
-let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
-
 export function resetBillsDbConnectionForTests(): void {
-  dbPromise = null;
+  resetMonthlyExpenseSqliteConnection();
 }
 
 async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (!dbPromise) {
-    dbPromise = SQLite.openDatabaseAsync(DATABASE_NAME);
-  }
-  return dbPromise;
+  return getMonthlyExpenseSqliteDb();
 }
 
 async function ensureBillsStore(): Promise<SQLite.SQLiteDatabase> {

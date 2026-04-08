@@ -5,9 +5,20 @@
   "scripts": {
     "test": "jest --watchAll=false",
     "start": "expo start",
+    "start:go": "expo start --go",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "prebuild": "expo prebuild",
+    "prebuild:android": "expo prebuild --platform android",
+    "prebuild:ios": "expo prebuild --platform ios",
+    "prebuild:web": "expo prebuild --platform web",
+    "prebuild:all": "expo prebuild --platform android --platform ios --platform web",
+    "prebuild:clean": "expo prebuild --clean",
+    "prebuild:clean:android": "expo prebuild --clean --platform android",
+    "prebuild:clean:ios": "expo prebuild --clean --platform ios",
+    "prebuild:clean:web": "expo prebuild --clean --platform web",
+    "prebuild:clean:all": "expo prebuild --clean --platform android --platform ios --platform web"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -18,8 +29,11 @@
     "@react-navigation/native-stack": "^7.14.6",
     "expo": "~54.0.0",
     "expo-dev-client": "~6.0.20",
+    "expo-document-picker": "~14.0.8",
+    "expo-file-system": "~19.0.21",
     "expo-notifications": "~0.32.16",
     "expo-secure-store": "~15.0.8",
+    "expo-sharing": "~14.0.8",
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",

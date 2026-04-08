@@ -1,19 +1,14 @@
 import * as SQLite from 'expo-sqlite';
+import { getMonthlyExpenseSqliteDb, resetMonthlyExpenseSqliteConnection } from '../database/monthlyExpenseSqliteDb';
 
-const DATABASE_NAME = 'monthly_expense.db';
 const TABLE_NAME = 'insurance_policies';
 
-let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
-
 export function resetInsurancePolicyDbConnectionForTests(): void {
-  dbPromise = null;
+  resetMonthlyExpenseSqliteConnection();
 }
 
 async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (!dbPromise) {
-    dbPromise = SQLite.openDatabaseAsync(DATABASE_NAME);
-  }
-  return dbPromise;
+  return getMonthlyExpenseSqliteDb();
 }
 
 async function ensureInsurancePolicyStore(): Promise<SQLite.SQLiteDatabase> {

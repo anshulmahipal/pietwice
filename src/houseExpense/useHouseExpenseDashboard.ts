@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   appendExpenseLineItems,
   loadCategorySpentMap,
@@ -22,19 +22,27 @@ export function useHouseExpenseDashboard() {
   const [isReady, setIsReady] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [categories, spentMap] = await Promise.all([
-      loadExpenseCategoriesFromDb(),
-      loadCategorySpentMap(),
-    ]);
+    try {
+      /** Sequential: both paths call `initExpenseCategoryStore`; parallel runs have stalled SQLite on cold start after auth. */
+      const categories = await loadExpenseCategoriesFromDb();
+      const spentMap = await loadCategorySpentMap();
 
-    const merged: HouseExpenseDashboardRow[] = categories.map((c) => ({
-      ...c,
-      spent: spentMap[categoryTitleKey(c.title)] ?? '0',
-    }));
+      const merged: HouseExpenseDashboardRow[] = categories.map((c) => ({
+        ...c,
+        spent: spentMap[categoryTitleKey(c.title)] ?? '0',
+      }));
 
-    setRows(merged);
-    setIsReady(true);
+      setRows(merged);
+    } catch {
+      setRows([]);
+    } finally {
+      setIsReady(true);
+    }
   }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 
   const saveSpent = useCallback(
     async (title: string, spent: string, expenseDateYmd: string) => {

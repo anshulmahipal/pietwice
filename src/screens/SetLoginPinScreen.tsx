@@ -2,10 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import type { Edge } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   PIN_LENGTH,
@@ -25,6 +27,10 @@ type SetLoginPinScreenProps = {
   /** When this value changes, the PIN buffer is cleared (e.g. after a failed unlock). */
   resetToken?: number;
   onPinComplete?: (pin: string) => void;
+  /**
+   * Limit safe-area padding (e.g. `['left','right']` when a parent modal already applies top/bottom insets).
+   */
+  safeAreaEdges?: readonly Edge[];
 };
 
 const KEYPAD_ROWS: string[][] = [
@@ -40,6 +46,7 @@ export function SetLoginPinScreen({
   errorMessage = null,
   resetToken = 0,
   onPinComplete,
+  safeAreaEdges,
 }: SetLoginPinScreenProps) {
   const [pin, setPin] = useState('');
   const onPinCompleteRef = useRef(onPinComplete);
@@ -64,97 +71,111 @@ export function SetLoginPinScreen({
   }
 
   return (
-    <SafeAreaView style={styles.screen} testID="set-login-pin-screen">
-      <View style={styles.heroCard}>
-        <Text style={styles.eyebrow}>Secure access</Text>
-        <Text style={styles.title}>{title}</Text>
-        <View style={styles.introBlock}>
-          <Text style={styles.subtitle}>{subtitle}</Text>
-          {errorMessage ? (
-            <View style={styles.errorPill}>
-              <Ionicons name="alert-circle-outline" size={16} color={financeColors.danger} />
-              <Text style={styles.error} accessibilityRole="alert">
-                {errorMessage}
-              </Text>
-            </View>
-          ) : null}
-        </View>
-      </View>
-
-      <View style={styles.pinCard}>
-        <Text style={styles.pinCardLabel}>4-digit PIN</Text>
-        <Text style={styles.pinCardHint}>Enter one digit at a time using the keypad.</Text>
-
-        <View style={styles.slotsRow} accessibilityRole="none">
-          {Array.from({ length: PIN_LENGTH }, (_, index) => {
-            const filled = index < pin.length;
-            return (
-              <View
-                key={index}
-                testID={`pin-slot-${index}`}
-                style={[styles.slot, filled && styles.slotFilled]}
-                accessibilityLabel={`PIN digit ${index + 1} ${filled ? 'filled' : 'empty'}`}
-              >
-                {filled ? <View style={styles.slotInner} /> : null}
+    <SafeAreaView
+      style={[styles.screen, safeAreaEdges ? styles.screenEmbedded : null]}
+      testID="set-login-pin-screen"
+      {...(safeAreaEdges ? { edges: safeAreaEdges } : {})}
+    >
+      <View style={styles.scrollHost}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator
+          testID="set-login-pin-scroll"
+        >
+        <View style={styles.heroCard}>
+          <Text style={styles.eyebrow}>Secure access</Text>
+          <Text style={styles.title}>{title}</Text>
+          <View style={styles.introBlock}>
+            <Text style={styles.subtitle}>{subtitle}</Text>
+            {errorMessage ? (
+              <View style={styles.errorPill}>
+                <Ionicons name="alert-circle-outline" size={16} color={financeColors.danger} />
+                <Text style={styles.error} accessibilityRole="alert">
+                  {errorMessage}
+                </Text>
               </View>
-            );
-          })}
+            ) : null}
+          </View>
         </View>
 
-        <Text style={styles.progressText}>
-          {pin.length === 0
-            ? 'Waiting for input'
-            : `${pin.length} of ${PIN_LENGTH} digits entered`}
-        </Text>
-      </View>
+        <View style={styles.pinCard}>
+          <Text style={styles.pinCardLabel}>4-digit PIN</Text>
+          <Text style={styles.pinCardHint}>Enter one digit at a time using the keypad.</Text>
 
-      <View style={styles.keypadCard}>
-        <Text style={styles.keypadLabel}>Numeric keypad</Text>
-        <View style={styles.keypad} accessibilityRole="none" accessibilityLabel="Numeric keypad">
-          {KEYPAD_ROWS.map((row, rowIndex) => (
-            <View key={`row-${rowIndex}`} style={styles.keypadRow}>
-              {row.map((key) => {
-                if (key === '') {
-                  return <View key="spacer" style={styles.keySpacer} />;
-                }
+          <View style={styles.slotsRow} accessibilityRole="none">
+            {Array.from({ length: PIN_LENGTH }, (_, index) => {
+              const filled = index < pin.length;
+              return (
+                <View
+                  key={index}
+                  testID={`pin-slot-${index}`}
+                  style={[styles.slot, filled && styles.slotFilled]}
+                  accessibilityLabel={`PIN digit ${index + 1} ${filled ? 'filled' : 'empty'}`}
+                >
+                  {filled ? <View style={styles.slotInner} /> : null}
+                </View>
+              );
+            })}
+          </View>
 
-                if (key === 'backspace') {
+          <Text style={styles.progressText}>
+            {pin.length === 0
+              ? 'Waiting for input'
+              : `${pin.length} of ${PIN_LENGTH} digits entered`}
+          </Text>
+        </View>
+
+        <View style={styles.keypadCard}>
+          <Text style={styles.keypadLabel}>Numeric keypad</Text>
+          <View style={styles.keypad} accessibilityRole="none" accessibilityLabel="Numeric keypad">
+            {KEYPAD_ROWS.map((row, rowIndex) => (
+              <View key={`row-${rowIndex}`} style={styles.keypadRow}>
+                {row.map((key) => {
+                  if (key === '') {
+                    return <View key="spacer" style={styles.keySpacer} />;
+                  }
+
+                  if (key === 'backspace') {
+                    return (
+                      <Pressable
+                        key="backspace"
+                        testID="pin-key-backspace"
+                        accessibilityLabel="Backspace"
+                        style={({ pressed }) => [
+                          styles.key,
+                          styles.keyWide,
+                          styles.keyUtility,
+                          pressed && styles.keyPressed,
+                        ]}
+                        onPress={handleBackspacePress}
+                      >
+                        <Ionicons name="backspace-outline" size={24} color={financeColors.text} />
+                      </Pressable>
+                    );
+                  }
+
                   return (
                     <Pressable
-                      key="backspace"
-                      testID="pin-key-backspace"
-                      accessibilityLabel="Backspace"
+                      key={key}
+                      testID={`pin-key-${key}`}
+                      accessibilityLabel={`Digit ${key}`}
                       style={({ pressed }) => [
                         styles.key,
-                        styles.keyWide,
-                        styles.keyUtility,
                         pressed && styles.keyPressed,
                       ]}
-                      onPress={handleBackspacePress}
+                      onPress={() => handleDigitPress(key)}
                     >
-                      <Ionicons name="backspace-outline" size={24} color={financeColors.text} />
+                      <Text style={styles.keyText}>{key}</Text>
                     </Pressable>
                   );
-                }
-
-                return (
-                  <Pressable
-                    key={key}
-                    testID={`pin-key-${key}`}
-                    accessibilityLabel={`Digit ${key}`}
-                    style={({ pressed }) => [
-                      styles.key,
-                      pressed && styles.keyPressed,
-                    ]}
-                    onPress={() => handleDigitPress(key)}
-                  >
-                    <Text style={styles.keyText}>{key}</Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          ))}
+                })}
+              </View>
+            ))}
+          </View>
         </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -166,9 +187,24 @@ const KEY_SIZE = 74;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    minHeight: 0,
     paddingHorizontal: 24,
     paddingTop: 40,
     backgroundColor: financeColors.background,
+  },
+  /** Tighter top spacing when embedded in Profile change-PIN modal (parent already pads top). */
+  screenEmbedded: {
+    paddingTop: 12,
+  },
+  scrollHost: {
+    flex: 1,
+    minHeight: 0,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 32,
   },
   heroCard: {
     borderRadius: 30,

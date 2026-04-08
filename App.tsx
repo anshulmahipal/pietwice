@@ -4,6 +4,7 @@ import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PinGate } from './src/auth/PinGate';
+import { financeColors } from './src/ui/financeTheme';
 
 if (Platform.OS !== 'web') {
   Notifications.setNotificationHandler({
@@ -30,5 +31,6 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: financeColors.background,
   },
 });

@@ -1,25 +1,42 @@
+import { deleteItemAsync } from 'expo-secure-store';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { isStoredPinMatch } from './pinGateLogic';
-import { getStoredPin, savePin } from './pinSecureStorage';
+import { isStoredPinMatch, normalizeStoredPin } from './pinGateLogic';
+import { getStoredPin, PIN_STORAGE_KEY, savePin } from './pinSecureStorage';
 
-export type PinGatePhase = 'loading' | 'create_pin' | 'unlock' | 'authenticated';
+export type PinGatePhase =
+  | 'loading'
+  | 'create_pin'
+  | 'create_pin_confirm'
+  | 'unlock'
+  | 'authenticated';
 
 export function usePinGate() {
   const [phase, setPhase] = useState<PinGatePhase>('loading');
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [unlockResetToken, setUnlockResetToken] = useState(0);
+  const [createPinError, setCreatePinError] = useState<string | null>(null);
+  const [createPinResetToken, setCreatePinResetToken] = useState(0);
   const storedPinRef = useRef<string | null>(null);
+  const pendingCreatePinRef = useRef<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
-      const pin = await getStoredPin();
+      const raw = await getStoredPin();
       if (cancelled) {
         return;
       }
-      storedPinRef.current = pin;
-      setPhase(pin ? 'unlock' : 'create_pin');
+      const normalized = normalizeStoredPin(raw);
+      if (raw !== null && normalized === null) {
+        try {
+          await deleteItemAsync(PIN_STORAGE_KEY);
+        } catch {
+          // ignore delete failures
+        }
+      }
+      storedPinRef.current = normalized;
+      setPhase(normalized ? 'unlock' : 'create_pin');
     })();
 
     return () => {
@@ -27,9 +44,28 @@ export function usePinGate() {
     };
   }, []);
 
-  const submitCreatedPin = useCallback(async (pin: string) => {
+  const submitFirstCreatePin = useCallback((pin: string) => {
+    pendingCreatePinRef.current = pin;
+    setCreatePinError(null);
+    setPhase('create_pin_confirm');
+    setCreatePinResetToken((t) => t + 1);
+  }, []);
+
+  const submitConfirmCreatePin = useCallback(async (pin: string) => {
+    const expected = pendingCreatePinRef.current;
+    if (expected === null) {
+      setPhase('create_pin');
+      return;
+    }
+    if (pin !== expected) {
+      setCreatePinError('PINs do not match');
+      setCreatePinResetToken((t) => t + 1);
+      return;
+    }
     await savePin(pin);
     storedPinRef.current = pin;
+    pendingCreatePinRef.current = null;
+    setCreatePinError(null);
     setPhase('authenticated');
   }, []);
 
@@ -51,7 +87,10 @@ export function usePinGate() {
     phase,
     unlockError,
     unlockResetToken,
-    submitCreatedPin,
+    createPinError,
+    createPinResetToken,
+    submitFirstCreatePin,
+    submitConfirmCreatePin,
     submitUnlockPin,
     replaceStoredPin,
   };

@@ -45,9 +45,6 @@ export function MainTabs() {
           fontSize: 11,
           fontWeight: '700',
         },
-        sceneStyle: {
-          backgroundColor: financeColors.background,
-        },
         tabBarHideOnKeyboard: true,
       }}
     >

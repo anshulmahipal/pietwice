@@ -85,4 +85,29 @@ describe('useExpenseCategories', () => {
 
     expect(replaceMock).toHaveBeenCalledWith([{ title: 'Milk', amount: '45' }]);
   });
+
+  it('removeCategoryAt drops a row in memory and does nothing when only one category remains', async () => {
+    loadMock.mockResolvedValue([
+      { title: 'Milk', amount: '10' },
+      { title: 'Rent', amount: '20' },
+    ]);
+
+    const { result } = renderHook(() => useExpenseCategories());
+
+    await waitFor(() => {
+      expect(result.current.isReady).toBe(true);
+    });
+
+    act(() => {
+      result.current.removeCategoryAt(0);
+    });
+
+    expect(result.current.categories).toEqual([{ title: 'Rent', amount: '20' }]);
+
+    act(() => {
+      result.current.removeCategoryAt(0);
+    });
+
+    expect(result.current.categories).toEqual([{ title: 'Rent', amount: '20' }]);
+  });
 });

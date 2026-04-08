@@ -1,22 +1,17 @@
 import * as SQLite from 'expo-sqlite';
+import { getMonthlyExpenseSqliteDb, resetMonthlyExpenseSqliteConnection } from '../database/monthlyExpenseSqliteDb';
 import { monthYmdRange } from '../houseExpense/expenseDate';
 import type { AccountType, LedgerEntryKind } from './accountLogic';
 
-const DATABASE_NAME = 'monthly_expense.db';
 const ACCOUNTS_TABLE = 'accounts';
 const ENTRIES_TABLE = 'account_entries';
 
-let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
-
 export function resetAccountsDbConnectionForTests(): void {
-  dbPromise = null;
+  resetMonthlyExpenseSqliteConnection();
 }
 
 async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (!dbPromise) {
-    dbPromise = SQLite.openDatabaseAsync(DATABASE_NAME);
-  }
-  return dbPromise;
+  return getMonthlyExpenseSqliteDb();
 }
 
 async function ensureAccountsStore(): Promise<SQLite.SQLiteDatabase> {

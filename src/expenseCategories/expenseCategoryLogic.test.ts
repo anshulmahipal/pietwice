@@ -5,6 +5,7 @@ import { DEFAULT_EXPENSE_CATEGORY_ROWS } from './defaultExpenseCategories';
 import {
   addCategoryRowIfNew,
   normalizeStoredCategoryRows,
+  removeCategoryRowAt,
   updateCategoryRow,
 } from './expenseCategoryLogic';
 
@@ -101,6 +102,30 @@ describe('ExpenseCategoryLogic', () => {
         { title: 'Milk', amount: '10' },
         { title: 'Rent', amount: '2500' },
       ]);
+    });
+  });
+
+  describe('removeCategoryRowAt', () => {
+    const rows = [
+      { title: 'Milk', amount: '10' },
+      { title: 'Rent', amount: '100' },
+      { title: 'Fuel', amount: '' },
+    ];
+
+    it('removes the row at index', () => {
+      expect(removeCategoryRowAt(rows, 1)).toEqual([
+        { title: 'Milk', amount: '10' },
+        { title: 'Fuel', amount: '' },
+      ]);
+    });
+
+    it('returns the same reference when index is invalid', () => {
+      expect(removeCategoryRowAt(rows, -1)).toBe(rows);
+      expect(removeCategoryRowAt(rows, 99)).toBe(rows);
+    });
+
+    it('can remove the only row', () => {
+      expect(removeCategoryRowAt([{ title: 'Only', amount: '1' }], 0)).toEqual([]);
     });
   });
 });

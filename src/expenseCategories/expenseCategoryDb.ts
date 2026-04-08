@@ -1,29 +1,24 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SQLite from 'expo-sqlite';
+import { getMonthlyExpenseSqliteDb, resetMonthlyExpenseSqliteConnection } from '../database/monthlyExpenseSqliteDb';
 import { monthYmdRange } from '../houseExpense/expenseDate';
 import { spentDeltaForLineItem } from '../houseExpense/expenseCalendarLogic';
 import { DEFAULT_EXPENSE_CATEGORY_ROWS } from './defaultExpenseCategories';
 import type { ExpenseCategoryRow } from './expenseCategoryLogic';
 import { normalizeStoredCategoryRows } from './expenseCategoryLogic';
 
-const DATABASE_NAME = 'monthly_expense.db';
 const TABLE_NAME = 'expense_categories';
 const SPENT_TABLE_NAME = 'category_spent';
 const LINE_ITEMS_TABLE = 'expense_line_items';
 /** Previous AsyncStorage key; migrated once into SQLite then removed. */
 export const LEGACY_EXPENSE_CATEGORY_STORAGE_KEY = 'house_expense_categories_v1';
 
-let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
-
 export function resetExpenseCategoryDbConnectionForTests(): void {
-  dbPromise = null;
+  resetMonthlyExpenseSqliteConnection();
 }
 
 async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (!dbPromise) {
-    dbPromise = SQLite.openDatabaseAsync(DATABASE_NAME);
-  }
-  return dbPromise;
+  return getMonthlyExpenseSqliteDb();
 }
 
 async function ensureCategorySpentExpenseDateColumn(db: SQLite.SQLiteDatabase): Promise<void> {

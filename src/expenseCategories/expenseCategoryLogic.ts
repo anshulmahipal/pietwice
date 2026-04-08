@@ -109,3 +109,11 @@ export function updateCategoryRow(
   next[index] = { ...row, amount: value };
   return next;
 }
+
+/** Returns a new array without the row at `index`. Invalid index returns `rows` unchanged. */
+export function removeCategoryRowAt(rows: ExpenseCategoryRow[], index: number): ExpenseCategoryRow[] {
+  if (index < 0 || index >= rows.length) {
+    return rows;
+  }
+  return rows.filter((_, i) => i !== index);
+}

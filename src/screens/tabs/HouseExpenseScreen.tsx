@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
@@ -26,6 +26,7 @@ import {
   toExpenseDateYmd,
 } from '../../houseExpense/expenseDate';
 import { useExpenseCalendarMonth } from '../../houseExpense/useExpenseCalendarMonth';
+import { useHouseholdIncomeSummary } from '../../householdIncome/useHouseholdIncome';
 import { useHouseExpenseDashboard } from '../../houseExpense/useHouseExpenseDashboard';
 import { formatInr } from '../../localization/indiaFormat';
 import { financeCalendarTheme, financeColors, financeShadow } from '../../ui/financeTheme';
@@ -33,6 +34,8 @@ import { financeCalendarTheme, financeColors, financeShadow } from '../../ui/fin
 export default function HouseExpenseScreen() {
   const navigation = useNavigation<any>();
   const { rows, isReady, refresh } = useHouseExpenseDashboard();
+  const { data: householdIncome, ready: incomeReady, totalMonthly: householdIncomeTotal } =
+    useHouseholdIncomeSummary();
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -49,6 +52,11 @@ export default function HouseExpenseScreen() {
     }
     return m;
   }, [rows]);
+
+  /** Calendar totals: mount + focus (dashboard initial load lives in `useHouseExpenseDashboard`). */
+  useEffect(() => {
+    void reloadDayTotals();
+  }, [reloadDayTotals]);
 
   useFocusEffect(
     useCallback(() => {
@@ -164,6 +172,16 @@ export default function HouseExpenseScreen() {
               <Text style={styles.heroStatValue}>{formatInr(totals.totalPending)}</Text>
             </View>
           </View>
+          {incomeReady && householdIncome ? (
+            <View style={styles.heroIncomeRow} testID="house-expense-hero-household-income">
+              <Text style={styles.heroIncomeLabel}>Household income (monthly)</Text>
+              <Text style={styles.heroIncomeValue}>{formatInr(householdIncomeTotal)}</Text>
+              <Text style={styles.heroIncomeHint}>
+                Husband {formatInr(parseAmount(householdIncome.husbandIncome))} · Wife{' '}
+                {formatInr(parseAmount(householdIncome.wifeIncome))}
+              </Text>
+            </View>
+          ) : null}
         </View>
 
         <View style={styles.sectionWrap}>
@@ -413,6 +431,29 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
     color: financeColors.text,
+  },
+  heroIncomeRow: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: financeColors.border,
+  },
+  heroIncomeLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: financeColors.textMuted,
+  },
+  heroIncomeValue: {
+    marginTop: 6,
+    fontSize: 22,
+    fontWeight: '800',
+    color: financeColors.text,
+  },
+  heroIncomeHint: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 18,
+    color: financeColors.textMuted,
   },
   sectionWrap: {
     marginHorizontal: 16,

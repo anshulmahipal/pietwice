@@ -14,6 +14,14 @@ const mockLoadLinesForDay = jest.fn((_ymd: string) =>
 );
 const mockNavigate = jest.fn();
 
+jest.mock('../../householdIncome/useHouseholdIncome', () => ({
+  useHouseholdIncomeSummary: () => ({
+    data: null,
+    ready: true,
+    totalMonthly: 0,
+  }),
+}));
+
 jest.mock('../../houseExpense/useHouseExpenseDashboard', () => ({
   useHouseExpenseDashboard: () => ({
     rows: [

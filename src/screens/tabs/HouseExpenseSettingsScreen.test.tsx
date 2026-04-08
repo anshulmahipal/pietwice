@@ -1,5 +1,5 @@
 /**
- * Unit: HouseExpenseSettingsScreen — edit mode, header Save, SQLite persist.
+ * Unit: HouseExpenseSettingsScreen — thin wrapper; same UX as household budget onboarding.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
@@ -19,6 +19,8 @@ jest.mock('../../expenseCategories/expenseCategoryDb', () => ({
   resetExpenseCategoryDbConnectionForTests: jest.fn(),
   loadCategorySpentMap: jest.fn(() => Promise.resolve({})),
   upsertCategorySpent: jest.fn(() => Promise.resolve()),
+  loadExpenseDayTotalsForMonth: jest.fn(() => Promise.resolve({})),
+  loadExpenseLineItemsForDay: jest.fn(() => Promise.resolve([])),
 }));
 
 const loadMock = loadExpenseCategoriesFromDb as jest.MockedFunction<
@@ -54,86 +56,37 @@ describe('HouseExpenseSettingsScreen', () => {
     loadMock.mockResolvedValue([...DEFAULT_EXPENSE_CATEGORY_ROWS]);
   });
 
-  it('starts in view mode with non-editable fields and Edit in the header', async () => {
+  it('shows the same category budget layout as onboarding (linear rows, Save)', async () => {
     render(<SettingsInStack />);
 
     await waitFor(() => {
-      expect(screen.queryByTestId('house-expense-settings-loading')).toBeNull();
+      expect(screen.getByTestId('household-budget-overview-screen')).toBeTruthy();
     });
 
-    expect(screen.getByTestId('house-expense-category-title-0')).toHaveProp('editable', false);
-    expect(screen.getByTestId('house-expense-category-amount-0')).toHaveProp('editable', false);
-    expect(screen.getByTestId('house-expense-settings-header-edit')).toBeTruthy();
-    expect(screen.queryByTestId('house-expense-new-category-title')).toBeNull();
+    expect(screen.getByText('Save')).toBeTruthy();
+    expect(screen.getByTestId('household-budget-add-open')).toBeTruthy();
+    expect(screen.getByTestId('household-budget-category-title-0')).toBeTruthy();
   });
 
-  it('enters edit mode from the header and enables inputs and Add', async () => {
-    render(<SettingsInStack />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('house-expense-settings-header-edit')).toBeTruthy();
-    });
-
-    fireEvent.press(screen.getByTestId('house-expense-settings-header-edit'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('house-expense-settings-header-save')).toBeTruthy();
-    });
-
-    expect(screen.getByTestId('house-expense-category-title-0')).toHaveProp('editable', true);
-    expect(screen.getByTestId('house-expense-new-category-title')).toBeTruthy();
-  });
-
-  it('adds a new category in memory when Add is pressed in edit mode', async () => {
-    render(<SettingsInStack />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('house-expense-settings-header-edit')).toBeTruthy();
-    });
-
-    fireEvent.press(screen.getByTestId('house-expense-settings-header-edit'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('house-expense-new-category-title')).toBeTruthy();
-    });
-
-    fireEvent.changeText(screen.getByTestId('house-expense-new-category-title'), 'Subscriptions');
-    fireEvent.changeText(screen.getByTestId('house-expense-new-category-amount'), '499');
-    fireEvent.press(screen.getByTestId('house-expense-add-category-button'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('house-expense-category-title-11')).toHaveProp(
-        'value',
-        'Subscriptions',
-      );
-    });
-
-    expect(replaceMock).not.toHaveBeenCalled();
-  });
-
-  it('persists from the header Save control and leaves edit mode', async () => {
-    loadMock.mockResolvedValue([{ title: 'Milk', amount: '10' }]);
+  it('persists categories when Save is pressed', async () => {
+    loadMock.mockResolvedValue([
+      { title: 'Milk', amount: '100' },
+      { title: 'Rent', amount: '5000' },
+    ]);
 
     render(<SettingsInStack />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('house-expense-settings-header-edit')).toBeTruthy();
+      expect(screen.getByTestId('household-budget-overview-screen')).toBeTruthy();
     });
 
-    fireEvent.press(screen.getByTestId('house-expense-settings-header-edit'));
+    fireEvent.press(screen.getByTestId('household-budget-continue'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('house-expense-settings-header-save')).toBeTruthy();
-    });
-
-    fireEvent.press(screen.getByTestId('house-expense-settings-header-save'));
-
-    await waitFor(() => {
-      expect(replaceMock).toHaveBeenCalledWith([{ title: 'Milk', amount: '10' }]);
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId('house-expense-settings-header-edit')).toBeTruthy();
+      expect(replaceMock).toHaveBeenCalledWith([
+        { title: 'Milk', amount: '100' },
+        { title: 'Rent', amount: '5000' },
+      ]);
     });
   });
 });

@@ -35,20 +35,29 @@ describe('useHouseExpenseDashboard', () => {
     loadSpent.mockResolvedValue({ milk: '20' });
   });
 
-  it('merges spent values by title key after refresh', async () => {
+  it('merges spent values by title key after initial load', async () => {
     const { result } = renderHook(() => useHouseExpenseDashboard());
 
-    expect(result.current.isReady).toBe(false);
-
-    await act(async () => {
-      await result.current.refresh();
+    await waitFor(() => {
+      expect(result.current.isReady).toBe(true);
     });
 
-    expect(result.current.isReady).toBe(true);
     expect(result.current.rows).toEqual([
       { title: 'Milk', amount: '100', spent: '20' },
       { title: 'Rent', amount: '5000', spent: '0' },
     ]);
+  });
+
+  it('marks ready with empty rows when load fails', async () => {
+    loadCats.mockRejectedValueOnce(new Error('db unavailable'));
+
+    const { result } = renderHook(() => useHouseExpenseDashboard());
+
+    await waitFor(() => {
+      expect(result.current.isReady).toBe(true);
+    });
+
+    expect(result.current.rows).toEqual([]);
   });
 
   it('saveSpent persists and refreshes merged rows', async () => {
@@ -56,8 +65,8 @@ describe('useHouseExpenseDashboard', () => {
 
     const { result } = renderHook(() => useHouseExpenseDashboard());
 
-    await act(async () => {
-      await result.current.refresh();
+    await waitFor(() => {
+      expect(result.current.isReady).toBe(true);
     });
 
     await act(async () => {
@@ -76,8 +85,8 @@ describe('useHouseExpenseDashboard', () => {
 
     const { result } = renderHook(() => useHouseExpenseDashboard());
 
-    await act(async () => {
-      await result.current.refresh();
+    await waitFor(() => {
+      expect(result.current.isReady).toBe(true);
     });
 
     await act(async () => {

@@ -1,5 +1,5 @@
 /**
- * Unit: HouseExpenseStack — House expense root with settings action in header.
+ * Unit: HouseExpenseStack — House expense home and expense details.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
@@ -20,6 +20,14 @@ jest.mock('../expenseCategories/expenseCategoryDb', () => {
     loadExpenseLineItemsForDay: jest.fn(() => Promise.resolve([])),
   };
 });
+
+jest.mock('../householdIncome/useHouseholdIncome', () => ({
+  useHouseholdIncomeSummary: () => ({
+    data: null,
+    ready: true,
+    totalMonthly: 0,
+  }),
+}));
 
 jest.mock('../houseExpense/useHouseExpenseDashboard', () => ({
   useHouseExpenseDashboard: () => ({
@@ -71,7 +79,7 @@ describe('HouseExpenseStack', () => {
     AsyncStorage.clear();
   });
 
-  it('shows the house expense home first with a settings control in the header', () => {
+  it('shows the house expense home first', () => {
     render(
       <NavigationContainer>
         <HouseExpenseStack />
@@ -79,7 +87,6 @@ describe('HouseExpenseStack', () => {
     );
 
     expect(screen.getByTestId('screen-house-expense')).toBeTruthy();
-    expect(screen.getByTestId('house-expense-header-settings')).toBeTruthy();
   });
 
   it('opens expense details when the combined summary is pressed', async () => {
@@ -96,19 +103,4 @@ describe('HouseExpenseStack', () => {
     });
   });
 
-  it('opens the settings screen when the header settings control is pressed', async () => {
-    render(
-      <NavigationContainer>
-        <HouseExpenseStack />
-      </NavigationContainer>,
-    );
-
-    fireEvent.press(screen.getByTestId('house-expense-header-settings'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('house-expense-settings-screen')).toBeTruthy();
-    });
-
-    expect(screen.getByTestId('house-expense-settings-header-edit')).toBeTruthy();
-  });
 });

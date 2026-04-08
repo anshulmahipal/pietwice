@@ -1,20 +1,15 @@
 import * as SQLite from 'expo-sqlite';
+import { getMonthlyExpenseSqliteDb, resetMonthlyExpenseSqliteConnection } from '../database/monthlyExpenseSqliteDb';
 import type { BudgetPeriodType } from './budgetLogic';
 
-const DATABASE_NAME = 'monthly_expense.db';
 const TABLE_NAME = 'budget_plans';
 
-let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
-
 export function resetBudgetDbConnectionForTests(): void {
-  dbPromise = null;
+  resetMonthlyExpenseSqliteConnection();
 }
 
 async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (!dbPromise) {
-    dbPromise = SQLite.openDatabaseAsync(DATABASE_NAME);
-  }
-  return dbPromise;
+  return getMonthlyExpenseSqliteDb();
 }
 
 async function ensureBudgetStore(): Promise<SQLite.SQLiteDatabase> {

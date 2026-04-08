@@ -7,6 +7,14 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { PinSessionContext } from '../auth/PinSessionContext';
 import { MainTabs } from './MainTabs';
 
+jest.mock('../householdIncome/useHouseholdIncome', () => ({
+  useHouseholdIncomeSummary: () => ({
+    data: null,
+    ready: true,
+    totalMonthly: 0,
+  }),
+}));
+
 jest.mock('../houseExpense/useHouseExpenseDashboard', () => ({
   useHouseExpenseDashboard: () => ({
     rows: [],

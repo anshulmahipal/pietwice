@@ -82,6 +82,31 @@ jest.mock('../../insurancePolicies/useInsurancePolicies', () => ({
   }),
 }));
 
+jest.mock('../../backup/monthlyExpenseBackup', () => ({
+  serializeMonthlyExpenseDatabase: jest.fn(async () => new Uint8Array([1])),
+  replaceMonthlyExpenseDatabaseFromBackup: jest.fn(async () => {}),
+  InvalidBackupFileError: class InvalidBackupFileError extends Error {},
+}));
+
+jest.mock('../../backup/monthlyExpenseBackupShare', () => ({
+  shareMonthlyExpenseBackupFile: jest.fn(async () => {}),
+  pickMonthlyExpenseBackupFile: jest.fn(async () => null),
+}));
+
+jest.mock('../../expenseCategories/expenseCategoryDb', () => {
+  const defaults = require('../../expenseCategories/defaultExpenseCategories')
+    .DEFAULT_EXPENSE_CATEGORY_ROWS as { title: string; amount: string }[];
+  return {
+    loadExpenseCategoriesFromDb: jest.fn(() => Promise.resolve([...defaults])),
+    replaceExpenseCategoriesInDb: jest.fn(() => Promise.resolve()),
+    resetExpenseCategoryDbConnectionForTests: jest.fn(),
+    loadCategorySpentMap: jest.fn(() => Promise.resolve({})),
+    upsertCategorySpent: jest.fn(() => Promise.resolve()),
+    loadExpenseDayTotalsForMonth: jest.fn(() => Promise.resolve({})),
+    loadExpenseLineItemsForDay: jest.fn(() => Promise.resolve([])),
+  };
+});
+
 jest.mock('../../insights/useInsightsOverview', () => ({
   useInsightsOverview: () => ({
     isReady: true,
@@ -120,12 +145,26 @@ describe('Profile stack (home)', () => {
     renderProfileStack();
 
     expect(screen.getByTestId('screen-profile')).toBeTruthy();
+    expect(screen.getByLabelText('Open expense categories')).toBeTruthy();
     expect(screen.getByLabelText('Open insights hub')).toBeTruthy();
     expect(screen.getByLabelText('Open accounts hub')).toBeTruthy();
     expect(screen.getByLabelText('Open budgets hub')).toBeTruthy();
     expect(screen.getByLabelText('Open investments hub')).toBeTruthy();
     expect(screen.getByLabelText('Open insurance hub')).toBeTruthy();
+    expect(screen.getByLabelText('Export data backup')).toBeTruthy();
+    expect(screen.getByLabelText('Restore data backup')).toBeTruthy();
     expect(screen.getByLabelText('Change entry PIN')).toBeTruthy();
+  });
+
+  it('navigates to expense categories settings', async () => {
+    renderProfileStack();
+
+    fireEvent.press(screen.getByLabelText('Open expense categories'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('household-budget-overview-screen')).toBeTruthy();
+    });
+    expect(screen.getByText('Save')).toBeTruthy();
   });
 
   it('navigates to budgets hub', async () => {

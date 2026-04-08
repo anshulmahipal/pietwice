@@ -3,7 +3,9 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
 import {
+  Alert,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -40,6 +42,88 @@ export function ProfileScreen() {
     openChangePin(pin);
   }, [openChangePin]);
 
+  const handleExportBackup = useCallback(async () => {
+    if (Platform.OS === 'web') {
+      return;
+    }
+    try {
+      const [{ serializeMonthlyExpenseDatabase }, { shareMonthlyExpenseBackupFile }] = await Promise.all([
+        import('../../backup/monthlyExpenseBackup'),
+        import('../../backup/monthlyExpenseBackupShare'),
+      ]);
+      const bytes = await serializeMonthlyExpenseDatabase();
+      await shareMonthlyExpenseBackupFile(bytes);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Could not create backup.';
+      Alert.alert('Backup failed', message);
+    }
+  }, []);
+
+  const handleRestoreBackup = useCallback(() => {
+    if (Platform.OS === 'web') {
+      return;
+    }
+    Alert.alert(
+      'Restore from backup?',
+      'This replaces all finance data in the app with the file you pick. Your PIN is stored separately and is not inside the backup. Reminder toggles for bills and cards also live outside the database.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Choose file',
+          onPress: () => {
+            void (async () => {
+              try {
+                const { pickMonthlyExpenseBackupFile } = await import(
+                  '../../backup/monthlyExpenseBackupShare'
+                );
+                const bytes = await pickMonthlyExpenseBackupFile();
+                if (!bytes) {
+                  return;
+                }
+                Alert.alert(
+                  'Replace all data?',
+                  'The current database will be overwritten. You cannot undo this.',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                      text: 'Restore',
+                      style: 'destructive',
+                      onPress: () => {
+                        void (async () => {
+                          try {
+                            const { replaceMonthlyExpenseDatabaseFromBackup } = await import(
+                              '../../backup/monthlyExpenseBackup'
+                            );
+                            await replaceMonthlyExpenseDatabaseFromBackup(bytes);
+                            Alert.alert(
+                              'Restore complete',
+                              'Fully close Bondwallet (swipe it away from recent apps) and open it again so every screen loads the restored data.',
+                            );
+                          } catch (err) {
+                            const message =
+                              err instanceof Error && err.name === 'InvalidBackupFileError'
+                                ? err.message
+                                : err instanceof Error
+                                  ? err.message
+                                  : 'Restore failed.';
+                            Alert.alert('Restore failed', message);
+                          }
+                        })();
+                      },
+                    },
+                  ],
+                );
+              } catch (e) {
+                const message = e instanceof Error ? e.message : 'Could not read the file.';
+                Alert.alert('Restore failed', message);
+              }
+            })();
+          },
+        },
+      ],
+    );
+  }, []);
+
   return (
     <View style={styles.container} testID="screen-profile">
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -67,8 +151,26 @@ export function ProfileScreen() {
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Open accounts hub"
+          accessibilityLabel="Open expense categories"
           style={({ pressed }) => [styles.rowButton, pressed && styles.rowButtonPressed]}
+          onPress={() => navigation.navigate('HouseExpenseSettings')}
+        >
+          <View style={styles.rowButtonInner}>
+            <View style={[styles.rowIconWrap, styles.accentIconWrap]}>
+              <Ionicons name="pricetags-outline" size={22} color={financeColors.accent} />
+            </View>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowButtonLabel}>Expense categories</Text>
+              <Text style={styles.rowButtonHint}>Names and monthly budgets for the Home expense list</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+          </View>
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open accounts hub"
+          style={({ pressed }) => [styles.rowButton, styles.rowButtonSpacing, pressed && styles.rowButtonPressed]}
           onPress={() => navigation.navigate('AccountsHub')}
         >
           <View style={styles.rowButtonInner}>
@@ -157,6 +259,56 @@ export function ProfileScreen() {
           </View>
         </Pressable>
 
+        {Platform.OS !== 'web' ? (
+          <>
+            <Text style={styles.sectionLabel}>Data</Text>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Export data backup"
+              style={({ pressed }) => [styles.rowButton, pressed && styles.rowButtonPressed]}
+              onPress={() => void handleExportBackup()}
+            >
+              <View style={styles.rowButtonInner}>
+                <View style={[styles.rowIconWrap, styles.blueIconWrap]}>
+                  <Ionicons name="cloud-upload-outline" size={22} color={financeColors.blue} />
+                </View>
+                <View style={styles.rowTextCol}>
+                  <Text style={styles.rowButtonLabel}>Export backup</Text>
+                  <Text style={styles.rowButtonHint}>
+                    Save a copy of your database to Files or cloud storage (share sheet)
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+              </View>
+            </Pressable>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Restore data backup"
+              style={({ pressed }) => [
+                styles.rowButton,
+                styles.rowButtonSpacing,
+                pressed && styles.rowButtonPressed,
+              ]}
+              onPress={handleRestoreBackup}
+            >
+              <View style={styles.rowButtonInner}>
+                <View style={[styles.rowIconWrap, styles.neutralIconWrap]}>
+                  <Ionicons name="cloud-download-outline" size={22} color={financeColors.textMuted} />
+                </View>
+                <View style={styles.rowTextCol}>
+                  <Text style={styles.rowButtonLabel}>Restore backup</Text>
+                  <Text style={styles.rowButtonHint}>
+                    After reinstall, pick the `.db` file you exported, then restart the app
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+              </View>
+            </Pressable>
+          </>
+        ) : null}
+
         <Text style={styles.sectionLabel}>Security</Text>
 
         <Pressable
@@ -181,7 +333,7 @@ export function ProfileScreen() {
       <Modal
         visible={changePinVisible}
         animationType="slide"
-        presentationStyle="pageSheet"
+        presentationStyle="fullScreen"
         onRequestClose={closeChangePin}
         testID="profile-change-pin-modal"
       >
@@ -205,12 +357,14 @@ export function ProfileScreen() {
             </Pressable>
           </View>
 
+          <View style={styles.modalPinBody}>
           {changePinStep === 'verify_current' ? (
             <SetLoginPinScreen
               title="Enter current PIN"
               subtitle="Confirm it is you before choosing a new PIN."
               errorMessage={changePinError}
               resetToken={changePinResetToken}
+              safeAreaEdges={['left', 'right']}
               onPinComplete={(pin) => {
                 void submitCurrentPin(pin);
               }}
@@ -223,6 +377,7 @@ export function ProfileScreen() {
               subtitle="Choose a new 4-digit PIN using the keypad below."
               errorMessage={changePinError}
               resetToken={changePinResetToken}
+              safeAreaEdges={['left', 'right']}
               onPinComplete={(pin) => {
                 submitNewPin(pin);
               }}
@@ -235,11 +390,13 @@ export function ProfileScreen() {
               subtitle="Enter the same 4 digits again to save."
               errorMessage={changePinError}
               resetToken={changePinResetToken}
+              safeAreaEdges={['left', 'right']}
               onPinComplete={(pin) => {
                 void submitConfirmPin(pin);
               }}
             />
           ) : null}
+          </View>
         </View>
       </Modal>
     </View>
@@ -369,7 +526,12 @@ const styles = StyleSheet.create({
   },
   modalChrome: {
     flex: 1,
+    minHeight: 0,
     backgroundColor: financeColors.background,
+  },
+  modalPinBody: {
+    flex: 1,
+    minHeight: 0,
   },
   modalHeader: {
     paddingHorizontal: 8,

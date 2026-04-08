@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ExpenseCategoryRow } from './expenseCategoryLogic';
-import { addCategoryRowIfNew, updateCategoryRow } from './expenseCategoryLogic';
+import { addCategoryRowIfNew, removeCategoryRowAt, updateCategoryRow } from './expenseCategoryLogic';
 import { loadExpenseCategoriesFromDb, replaceExpenseCategoriesInDb } from './expenseCategoryDb';
 
 export function useExpenseCategories() {
@@ -72,6 +72,22 @@ export function useExpenseCategories() {
     [setCategoriesFromRef],
   );
 
+  /** Removes the row at `index`. No-op if there is only one category (keeps at least one). */
+  const removeCategoryAt = useCallback(
+    (index: number) => {
+      const prev = categoriesRef.current;
+      if (prev.length <= 1) {
+        return;
+      }
+      const next = removeCategoryRowAt(prev, index);
+      if (next === prev) {
+        return;
+      }
+      setCategoriesFromRef(next);
+    },
+    [setCategoriesFromRef],
+  );
+
   const saveCategories = useCallback(async () => {
     setIsSaving(true);
     try {
@@ -88,6 +104,7 @@ export function useExpenseCategories() {
     addCategory,
     updateCategoryTitle,
     updateCategoryAmount,
+    removeCategoryAt,
     saveCategories,
   };
 }

@@ -1,8 +1,7 @@
-import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MainTabs } from '../navigation/MainTabs';
+import { HouseholdIncomeGate } from '../householdIncome/HouseholdIncomeGate';
 import { SetLoginPinScreen } from '../screens/SetLoginPinScreen';
 import { financeColors, financeShadow } from '../ui/financeTheme';
 import { PinSessionContext } from './PinSessionContext';
@@ -16,6 +15,14 @@ export function PinGate() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.centered}>
           <View style={styles.loadingCard}>
+            <Image
+              testID="bondwallet-launch-logo"
+              source={require('../../assets/bondwallet-logo.png')}
+              style={styles.launchLogo}
+              resizeMode="contain"
+              accessibilityRole="image"
+              accessibilityLabel="BondWallet"
+            />
             <Text style={styles.loadingEyebrow}>Secure access</Text>
             <Text style={styles.loadingTitle}>Getting your lock screen ready</Text>
             <Text style={styles.loadingCaption}>
@@ -33,9 +40,7 @@ export function PinGate() {
       <PinSessionContext.Provider
         value={{ replaceStoredPin: gate.replaceStoredPin }}
       >
-        <NavigationContainer>
-          <MainTabs />
-        </NavigationContainer>
+        <HouseholdIncomeGate />
       </PinSessionContext.Provider>
     );
   }
@@ -43,8 +48,25 @@ export function PinGate() {
   if (gate.phase === 'create_pin') {
     return (
       <SetLoginPinScreen
+        title="Create your PIN"
+        subtitle="Choose 4 digits. On the next screen you will enter them again to confirm."
+        resetToken={gate.createPinResetToken}
         onPinComplete={(pin) => {
-          void gate.submitCreatedPin(pin);
+          gate.submitFirstCreatePin(pin);
+        }}
+      />
+    );
+  }
+
+  if (gate.phase === 'create_pin_confirm') {
+    return (
+      <SetLoginPinScreen
+        title="Confirm your PIN"
+        subtitle="Enter the same 4 digits again to finish setup."
+        errorMessage={gate.createPinError}
+        resetToken={gate.createPinResetToken}
+        onPinComplete={(pin) => {
+          void gate.submitConfirmCreatePin(pin);
         }}
       />
     );
@@ -74,6 +96,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
     backgroundColor: financeColors.background,
+  },
+  launchLogo: {
+    width: 260,
+    aspectRatio: 1024 / 682,
+    alignSelf: 'center',
+    marginBottom: 4,
   },
   loadingCard: {
     width: '100%',
