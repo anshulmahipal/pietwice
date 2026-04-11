@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { ScrollFeatureShowcase } from "./components/ScrollFeatureShowcase";
@@ -23,6 +24,7 @@ export function App() {
         <GetApp />
       </main>
       <Footer />
+      <Analytics />
     </div>
   );
 }
