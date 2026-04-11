@@ -1,0 +1,73 @@
+:root {
+  --cream: #f9f7f2;
+  --cream-dark: #ebe6dc;
+  --ink: #14120f;
+  --ink-muted: #5c574e;
+  --forest: #1e3d32;
+  --forest-light: #2a5244;
+  --coral: #e66d44;
+  --coral-dark: #cf5f3a;
+  --peach: #f3d4c8;
+  --mist: #d7d2cc;
+  --accent: #e66d44;
+  --white: #ffffff;
+  --shadow: rgba(20, 18, 15, 0.12);
+  --radius: 16px;
+  --radius-lg: 24px;
+  --font-display: "Playfair Display", "Times New Roman", Times, serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--coral-dark);
+  font-weight: 600;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--forest);
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--coral) 65%, var(--ink));
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -20,7 +20,8 @@
     "prebuild:clean:web": "expo prebuild --clean --platform web",
     "prebuild:clean:all": "expo prebuild --clean --platform android --platform ios --platform web",
     "update:production": "eas update --channel production",
-    "update:preview": "eas update --channel preview"
+    "update:preview": "eas update --channel preview",
+    "deploy:marketing": "npx vercel deploy --prod --name bondwallet"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
