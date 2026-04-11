@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const nav = [
-  { href: "#stories", label: "Stories" },
-  { href: "#split-demo", label: "Split" },
-  { href: "#playground", label: "Snapshot" },
-  { href: "#features", label: "Features" },
-  { href: "#faq", label: "FAQ" },
+  { to: "/#stories", label: "Stories" },
+  { to: "/#split-demo", label: "Split" },
+  { to: "/#playground", label: "Snapshot" },
+  { to: "/#features", label: "Features" },
+  { to: "/#faq", label: "FAQ" },
+  { to: "/privacy", label: "Privacy" },
 ];
 
 export function Header() {
@@ -21,21 +23,21 @@ export function Header() {
   return (
     <header className={`site-header ${scrolled ? "site-header--scrolled" : ""}`}>
       <div className="site-header__inner">
-        <a className="site-logo" href="#top">
+        <Link className="site-logo" to="/">
           BondWallet
-        </a>
+        </Link>
         <nav className="site-nav" aria-label="Primary">
           <ul>
             {nav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href}>{item.label}</a>
+              <li key={item.to}>
+                <Link to={item.to}>{item.label}</Link>
               </li>
             ))}
           </ul>
         </nav>
-        <a className="btn btn--small btn--primary" href="#get-app">
+        <Link className="btn btn--small btn--primary" to="/#get-app">
           Get the app
-        </a>
+        </Link>
       </div>
     </header>
   );

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PhoneMockup } from "./PhoneMockup";
 
 export function Hero() {
@@ -21,12 +22,12 @@ export function Hero() {
             cards, and backups—kept on your device with a PIN.
           </p>
           <div className="hero__actions">
-            <a className="btn btn--primary" href="#get-app">
+            <Link className="btn btn--primary" to="/#get-app">
               Get BondWallet
-            </a>
-            <a className="btn btn--ghost" href="#split-demo">
+            </Link>
+            <Link className="btn btn--ghost" to="/#split-demo">
               Try split demo
-            </a>
+            </Link>
           </div>
           <ul className="hero__pills" aria-label="Highlights">
             <li>₹ INR everywhere</li>

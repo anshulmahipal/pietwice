@@ -2,5 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install --prefix marketing",
   "buildCommand": "npm run build --prefix marketing",
-  "outputDirectory": "marketing/dist"
+  "outputDirectory": "marketing/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

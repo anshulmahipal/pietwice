@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.logicnib.bondwallet";
 
@@ -34,9 +36,9 @@ export function GetApp() {
         </div>
 
         <div className="get-app__actions">
-          <a className="btn btn--ghost" href="#top">
+          <Link className="btn btn--ghost" to="/#top">
             Back to top
-          </a>
+          </Link>
         </div>
 
         <p className="get-app__fineprint">
