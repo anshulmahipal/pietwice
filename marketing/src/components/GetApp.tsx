@@ -40,10 +40,6 @@ export function GetApp() {
             Back to top
           </Link>
         </div>
-
-        <p className="get-app__fineprint">
-          Package: <code>com.logicnib.bondwallet</code> · Cream UI <code>#f6f1e8</code>
-        </p>
       </div>
     </section>
   );

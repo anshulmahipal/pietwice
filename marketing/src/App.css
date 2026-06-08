@@ -1050,18 +1050,6 @@ main {
   margin: 20px 0 12px;
 }
 
-.get-app__fineprint {
-  font-size: 0.85rem;
-  color: var(--ink-muted);
-}
-
-.get-app__fineprint code {
-  font-size: 0.82rem;
-  background: var(--cream-dark);
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-
 .legal-page {
   flex: 1;
   padding: 32px 20px 56px;
