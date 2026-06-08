@@ -1,0 +1,51 @@
+<svg
+  width="512"
+  height="152"
+  viewBox="0 0 512 152"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect x="4" y="4" width="504" height="144" rx="18" fill="#111111" />
+  <rect
+    x="4"
+    y="4"
+    width="504"
+    height="144"
+    rx="18"
+    stroke="#FFFFFF"
+    stroke-opacity="0.12"
+    stroke-width="8"
+  />
+
+  <g transform="translate(42 30)">
+    <path
+      d="M8 8C8 3.6 12.9 1 16.5 3.3L68.5 37L49.6 55.8L8 14.2V8Z"
+      fill="#00D17A"
+    />
+    <path d="M68.5 37L90.2 51.1C94.9 54.1 94.9 60.9 90.2 63.9L68.5 78L49.6 55.8L68.5 37Z" fill="#FFD400" />
+    <path d="M8 86.8C8 91.2 12.9 93.8 16.5 91.5L68.5 58L49.6 55.8L8 97.4V86.8Z" fill="#00A3FF" />
+    <path d="M8 14.2L49.6 55.8L68.5 78L32.1 89.7L8 97.4L49.6 55.8L8 14.2Z" fill="#FF4D5A" />
+  </g>
+
+  <text
+    x="150"
+    y="58"
+    fill="#FFFFFF"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="24"
+    font-weight="700"
+    letter-spacing="3.2"
+  >
+    GET IT ON
+  </text>
+  <text
+    x="150"
+    y="104"
+    fill="#FFFFFF"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="44"
+    font-weight="700"
+  >
+    Google Play
+  </text>
+</svg>

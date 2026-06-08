@@ -44,7 +44,8 @@
       "expo-sqlite",
       "expo-notifications",
       "expo-updates",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "./plugins/withAdiRegistration.js"
     ],
     "owner": "logicnib",
     "extra": {

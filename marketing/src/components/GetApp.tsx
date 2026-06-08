@@ -21,10 +21,10 @@ export function GetApp() {
             rel="noopener noreferrer"
           >
             <img
-              src="/google-play-badge.png"
+              src="/google-play-badge.svg"
               alt="Get it on Google Play"
-              width={1024}
-              height={387}
+              width={512}
+              height={152}
               decoding="async"
             />
           </a>
