@@ -5,7 +5,7 @@ const STEPS = [
   {
     src: "/screenshots/money-clarity-couples.png",
     title: "Money clarity for couples",
-    sub: "Track, plan, and stay in sync — without stress",
+    sub: "Track, plan, and stay on the same page without stress",
     kicker: "Home snapshot",
     caption: "Household income, what is left, and quick actions—without menu diving.",
   },

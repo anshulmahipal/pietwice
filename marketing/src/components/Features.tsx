@@ -28,7 +28,7 @@ const FEATURES: Feature[] = [
   },
   {
     title: "PIN lock & backup",
-    body: "Unlock with a PIN, export or restore your SQLite backup when you change devices—designed for cautious households.",
+    body: "Unlock with a PIN and export or restore a local backup file when you change devices.",
   },
 ];
 

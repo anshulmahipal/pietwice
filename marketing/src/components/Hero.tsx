@@ -16,10 +16,10 @@ export function Hero() {
           <h1 id="hero-title" className="hero__title">
             Money clarity for couples
           </h1>
-          <p className="hero__kicker">Track, plan, and stay in sync — without stress</p>
+          <p className="hero__kicker">Track, plan, and stay on the same page without stress</p>
           <p className="hero__lead">
-            BondWallet is a calm, India-ready household wallet: monthly snapshot, categories, bills,
-            cards, and backups—kept on your device with a PIN.
+            BondWallet is a calm, India-ready household wallet for monthly snapshots, categories,
+            bills, cards, and local backups, with records designed to stay on your device.
           </p>
           <div className="hero__actions">
             <Link className="btn btn--primary" to="/#get-app">

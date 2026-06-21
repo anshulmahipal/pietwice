@@ -9,15 +9,15 @@ const ITEMS: FaqItem[] = [
   },
   {
     q: "Where does my data live?",
-    a: "Primarily on your device in SQLite. You can export a backup file from the profile screen when you want a portable copy.",
+    a: "Most of it stays on your device in a local SQLite database. Some setup and reminder preferences stay in device storage, and exported backups cover the main database rather than every device-only setting.",
   },
   {
     q: "Does it work offline?",
-    a: "Core tracking works offline. Anything that needs the network (for example OTA updates via Expo) is separate from your ledger.",
+    a: "Yes. Core tracking works offline and does not require a BondWallet cloud account. Network use is limited to surrounding services such as app delivery updates.",
   },
   {
     q: "Is this the same codebase as this website?",
-    a: "This page is a small Vite marketing site. The product is the Expo app in the main repo—same brand, different surface.",
+    a: "The app and the website live in the same repo, but this page is a separate Vite marketing surface from the Expo mobile app itself.",
   },
 ];
 

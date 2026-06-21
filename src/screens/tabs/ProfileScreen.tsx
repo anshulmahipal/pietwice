@@ -65,7 +65,7 @@ export function ProfileScreen() {
     }
     Alert.alert(
       'Restore from backup?',
-      'This replaces all finance data in the app with the file you pick. Your PIN is stored separately and is not inside the backup. Reminder toggles for bills and cards also live outside the database.',
+      'This replaces the main BondWallet database with the file you pick. Your PIN, household income setup, onboarding flags, and reminder toggles are stored separately and are not part of this backup.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -276,7 +276,7 @@ export function ProfileScreen() {
                 <View style={styles.rowTextCol}>
                   <Text style={styles.rowButtonLabel}>Export backup</Text>
                   <Text style={styles.rowButtonHint}>
-                    Save a copy of your database to Files or cloud storage (share sheet)
+                    Save a copy of the main app database to Files or cloud storage via the share sheet
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
@@ -300,7 +300,7 @@ export function ProfileScreen() {
                 <View style={styles.rowTextCol}>
                   <Text style={styles.rowButtonLabel}>Restore backup</Text>
                   <Text style={styles.rowButtonHint}>
-                    After reinstall, pick the `.db` file you exported, then restart the app
+                    Restore the exported `.db` backup for your main app records, then restart the app
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
